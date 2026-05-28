@@ -1,0 +1,56 @@
+83:function OtherOpinionsCard({ title, data, isExporting, questionCode }: { title: string, data: {prefix: string, text: string}[], isExporting?: boolean, questionCode?: string }) {
+88:    <div className={`bg-white border border-slate-100 rounded-2xl p-5 text-left shadow-xs flex flex-col justify-between hover:border-teal-200 transition duration-200 ${isExporting ? 'h-auto' : 'h-full min-h-[340px]'}`} style={{ pageBreakInside: 'avoid' }}>
+96:      <div className={`space-y-3 text-xs grow ${isExporting ? '' : 'overflow-y-auto pr-2 custom-scrollbar'}`}>
+123:  const [isExporting, setIsExporting] = useState<boolean>(false);
+1976:            style={isExporting ? { width: '730px', minWidth: '730px', padding: '24px 16px', boxSizing: 'border-box', backgroundColor: '#ffffff' } : undefined}
+1983:                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5" style={isExporting ? { pageBreakInside: 'avoid', marginBottom: '16px' } : undefined}>
+2002:                  <div className="bg-slate-900 text-white rounded-2xl p-6 border border-emerald-500/30 text-left shadow-lg space-y-4" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2090:                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2095:                        <div className={isExporting ? "h-[300px] flex justify-center w-full overflow-hidden" : "h-72"}>
+2096:                          {isExporting ? (
+2163:                        <OtherOpinionsCard title="2-1. 기타 의견 (주요 사업 분야)" data={demandStats.qaGroups['2-1. 사업분야 기타의견']} isExporting={isExporting} questionCode="q2_1" />
+2165:                        <OtherOpinionsCard title="2-2. 기타 의견 (인지 경로)" data={demandStats.qaGroups['2-2. 훈련경로 기타의견']} isExporting={isExporting} questionCode="q2_2" />
+2168:                        <OtherOpinionsCard title="2-4. 기타 의견 (훈련 필요성 이유)" data={demandStats.qaGroups['2-4. 훈련필요이유 기타의견']} isExporting={isExporting} questionCode="q2_4" />
+2170:                        <OtherOpinionsCard title="2-5. 기타 의견 (희망 실습/이론 비율)" data={demandStats.qaGroups['2-5. 희망비율 기타의견']} isExporting={isExporting} questionCode="q2_5" />
+2172:                        <OtherOpinionsCard title="2-6. 기타 의견 (결정권자)" data={demandStats.qaGroups['2-6. 결정권자 기타의견']} isExporting={isExporting} questionCode="q2_6" />
+2174:                        <OtherOpinionsCard title="2-7. 기타 의견 (참여 애로사항)" data={demandStats.qaGroups['2-7. 장애요인 기타의견']} isExporting={isExporting} questionCode="q2_7" />
+2179:                        <OtherOpinionsCard title="3-2. 기타 의견 (타 교육원 선택 이유)" data={demandStats.qaGroups['3-2. 교육원 선택이유 기타의견']} isExporting={isExporting} questionCode="q3_2" />
+2181:                        <OtherOpinionsCard title="3-4. 기타 의견 (교육 위탁 시 고려 요인)" data={demandStats.qaGroups['3-4. 고려요인 기타의견']} isExporting={isExporting} questionCode="q3_4" />
+2184:                        <OtherOpinionsCard title="4-1. 기타 의견 (현장 업무 진행 상의 구체적 애로)" data={demandStats.qaGroups['4-1. 현장어려움 기타의견']} isExporting={isExporting} questionCode="q4_1" />
+2186:                        <OtherOpinionsCard title="4-2. 기타 의견 (현장 애로 해소 방안 제안)" data={demandStats.qaGroups['4-2. 해결방법 기타의견']} isExporting={isExporting} questionCode="q4_2" />
+2187:                        <OtherOpinionsCard title="4-3. 협회 컨소시엄을 통해 과정 편성을 희망하는 직무훈련내용" data={demandStats.qaGroups['4-3. 추가 개설 필요 과정']} isExporting={isExporting} questionCode="q4_3" />
+2188:                        <OtherOpinionsCard title="4-4. 정부지원 교육사업 및 전력설비업계 관련 바라는 점" data={demandStats.qaGroups['4-4. 바라는 점']} isExporting={isExporting} questionCode="q4_4" />
+2232:                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5" style={isExporting ? { pageBreakInside: 'avoid', marginBottom: '16px' } : undefined}>
+2253:                  <div className="bg-slate-900 text-white rounded-2xl p-6 border border-teal-500/30 text-left shadow-lg space-y-4" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2292:                    <div className={isExporting ? "grid grid-cols-1 gap-8" : "grid grid-cols-1 lg:grid-cols-2 gap-8"}>
+2294:                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2296:                        <div className={isExporting ? "h-[300px] flex justify-center w-full overflow-hidden" : "h-72"}>
+2297:                          {isExporting ? (
+2340:                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2342:                        <div className={isExporting ? "h-[250px] flex justify-center w-full overflow-hidden" : "h-64 flex items-center justify-center"}>
+2343:                          {isExporting ? (
+2399:                    <div className="p-6 bg-slate-50 rounded-2xl border border-gray-150 text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2401:                      <div className={isExporting ? "grid grid-cols-1 gap-6 text-xs" : "grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs"}>
+2402:                        <div className={isExporting ? "" : "max-h-[260px] overflow-y-auto pr-2 bg-white/50 p-3 rounded-xl border border-gray-100/80"}>
+2410:                        <div className={isExporting ? "" : "max-h-[260px] overflow-y-auto pr-2 bg-white/50 p-3 rounded-xl border border-gray-100/80"}>
+2490:                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5" style={isExporting ? { pageBreakInside: 'avoid', marginBottom: '16px' } : undefined}>
+2511:                  <div className="bg-slate-900 text-white rounded-2xl p-6 border border-emerald-500/30 text-left shadow-lg space-y-4" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2550:                    <div className={isExporting ? "grid grid-cols-1 gap-8" : "grid grid-cols-1 lg:grid-cols-2 gap-8"}>
+2552:                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl col-span-1 lg:col-span-2 text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2557:                        <div className={isExporting ? "h-[320px] flex justify-center w-full overflow-hidden" : "h-80"}>
+2558:                          {isExporting ? (
+2607:                    <div className={isExporting ? "grid grid-cols-1 gap-8" : "grid grid-cols-1 lg:grid-cols-2 gap-8"}>
+2609:                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl flex flex-col justify-between text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2611:                        <div className={isExporting ? "h-[250px] flex justify-center w-full overflow-hidden" : "h-60 flex items-center justify-center"}>
+2612:                          {isExporting ? (
+2667:                      <div className={`bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left ${isExporting ? 'overflow-visible h-auto' : 'overflow-y-auto max-h-[260px] pr-2'}`} style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2762:                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5" style={isExporting ? { pageBreakInside: 'avoid', marginBottom: '16px' } : undefined}>
+2779:                  <div className="bg-slate-900 text-white rounded-2xl p-6 border border-emerald-500/30 text-left shadow-lg space-y-4" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2816:                    <div className={isExporting ? "grid grid-cols-1 gap-8" : "grid grid-cols-1 lg:grid-cols-2 gap-8"}>
+2817:                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2819:                        <div className={isExporting ? "h-[300px] flex justify-center w-full overflow-hidden" : "h-72"}>
+2820:                          {isExporting ? (
+2877:                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+2879:                        <div className={isExporting ? "h-[250px] flex justify-center w-full overflow-hidden" : "h-64 flex items-center justify-center"}>
+2880:                          {isExporting ? (
+2936:                    <div className={`bg-slate-50 border border-gray-150 p-6 rounded-2xl text-left ${isExporting ? 'overflow-visible h-auto' : 'overflow-y-auto max-h-[260px] pr-2'}`} style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>

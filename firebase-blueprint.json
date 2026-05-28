@@ -1,0 +1,167 @@
+{
+  "entities": {
+    "SurveyDemand": {
+      "title": "SurveyDemand",
+      "description": "2027 훈련 수요조사 응답 데이터",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string" },
+        "representative": { "type": "string" },
+        "companyAddress": { "type": "string" },
+        "contactName": { "type": "string" },
+        "department": { "type": "string" },
+        "position": { "type": "string" },
+        "tel": { "type": "string" },
+        "mobile": { "type": "string" },
+        "fax": { "type": "string" },
+        "email": { "type": "string" },
+        "privacyConsent": { "type": "boolean" },
+        "q1_1": { "type": "string" },
+        "q1_2": { "type": "string" },
+        "q1_3": { "type": "string" },
+        "q2_1": { "type": "string" },
+        "q2_2": { "type": "array" },
+        "q2_3": { "type": "string" },
+        "q2_4": { "type": "string" },
+        "q2_5": { "type": "string" },
+        "q2_6": { "type": "string" },
+        "q2_7": { "type": "array" },
+        "q2_8": { "type": "string" },
+        "q3_1": { "type": "string" },
+        "q3_2": { "type": "string" },
+        "q3_3": { "type": "array" },
+        "q3_4": { "type": "array" },
+        "q3_5": { "type": "array" },
+        "q3_6": { "type": "string" },
+        "q4_1": { "type": "string" },
+        "q4_2": { "type": "string" },
+        "q4_3": { "type": "string" },
+        "q4_4": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["companyName", "contactName", "email", "privacyConsent"]
+    },
+    "SurveyFieldCorp": {
+      "title": "SurveyFieldCorp",
+      "description": "현업적용도 측정조사 - 기업용 응답 데이터",
+      "type": "object",
+      "properties": {
+        "q1_1": { "type": "string" },
+        "q1_2": { "type": "string" },
+        "q1_3": { "type": "string" },
+        "q1_4": { "type": "string" },
+        "q2_1": { "type": "array" },
+        "q2_2": { "type": "string" },
+        "q2_3": { "type": "string" },
+        "q2_4": { "type": "string" },
+        "q2_5": { "type": "string" },
+        "q2_6": { "type": "string" },
+        "q2_7": { "type": "string" },
+        "q3_1": { "type": "string" },
+        "q3_2": { "type": "string" },
+        "q3_3": { "type": "string" },
+        "q3_4": { "type": "string" },
+        "q3_5": { "type": "string" },
+        "q3_6": { "type": "string" },
+        "q3_7": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["q1_1", "q1_2"]
+    },
+    "SurveyFieldTrainee": {
+      "title": "SurveyFieldTrainee",
+      "description": "현업적용도 측정조사 - 훈련생용 응답 데이터",
+      "type": "object",
+      "properties": {
+        "q1_1": { "type": "string" },
+        "q1_2": { "type": "string" },
+        "q1_3": { "type": "string" },
+        "q2_1": { "type": "array" },
+        "q2_2": { "type": "string" },
+        "q2_3": { "type": "string" },
+        "q2_4": { "type": "string" },
+        "q2_5": { "type": "string" },
+        "q2_6": { "type": "string" },
+        "q3_1": { "type": "string" },
+        "q3_2": { "type": "string" },
+        "q4_1": { "type": "string" },
+        "q4_2": { "type": "string" },
+        "q5_1": { "type": "string" },
+        "q5_2": { "type": "string" },
+        "q6_1": { "type": "string" },
+        "q6_2": { "type": "string" },
+        "q7_1": { "type": "string" },
+        "q7_2": { "type": "string" },
+        "q8": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["q1_1", "q1_2"]
+    },
+    "SurveyFgi": {
+      "title": "SurveyFgi",
+      "description": "FGI 질문지 응답 데이터",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string" },
+        "companyType": { "type": "string" },
+        "companyAddress": { "type": "string" },
+        "industry": { "type": "string" },
+        "contactName": { "type": "string" },
+        "department": { "type": "string" },
+        "position": { "type": "string" },
+        "tel": { "type": "string" },
+        "email": { "type": "string" },
+        "q1_1": { "type": "string" },
+        "q1_2": { "type": "string" },
+        "q1_3": { "type": "array" },
+        "q2_1": { "type": "string" },
+        "q2_2": { "type": "string" },
+        "q2_3": { "type": "string" },
+        "q2_4": { "type": "array" },
+        "q2_5": { "type": "array" },
+        "q3_1": { "type": "array" },
+        "q3_2": { "type": "array" },
+        "q3_3": { "type": "string" },
+        "q3_4": { "type": "array" },
+        "q3_5": { "type": "string" },
+        "q4_1": { "type": "string" },
+        "q4_2": { "type": "array" },
+        "q4_3": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["companyName", "contactName", "email"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "관리자 계정 매핑 구조",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "role": { "type": "string" }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "surveys_demand/{docId}": {
+      "schema": "SurveyDemand",
+      "description": "2027 훈련 수요조사 응답 컬렉션"
+    },
+    "surveys_field_corp/{docId}": {
+      "schema": "SurveyFieldCorp",
+      "description": "현업적용도 기업용 설문 응답 컬렉션"
+    },
+    "surveys_field_trainee/{docId}": {
+      "schema": "SurveyFieldTrainee",
+      "description": "현업적용도 훈련생용 설문 응답 컬렉션"
+    },
+    "surveys_fgi/{docId}": {
+      "schema": "SurveyFgi",
+      "description": "FGI 설문 응답 컬렉션"
+    },
+    "admins/{uid}": {
+      "schema": "Admin",
+      "description": "등록된 관리자 정보"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Consortium Training Survey Portal",
+  "description": "컨소시엄 훈련 통합 설문조사 포털 앱 및 통합 관리자 대시보드",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

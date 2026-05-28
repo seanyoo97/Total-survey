@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Noto Sans KR", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --color-primary-green: #2B5C43;
+  --color-primary-green-hover: #1D412F;
+  --color-brand-bg: #F4F6F5;
+
+  /* Restful sage-green custom variants replacing standard configurations */
+  --color-emerald-50: #F0F4F2;
+  --color-emerald-100: #E1EBE6;
+  --color-emerald-200: #CBDCD2;
+  --color-emerald-500: #2B5C43;
+  --color-emerald-600: #204532;
+  --color-emerald-700: #1B3B2B;
+  --color-emerald-800: #162E22;
+  --color-emerald-950: #0D1C14;
+
+  --color-green-100: #E1EBE6;
+  --color-green-500: #2B5C43;
+  --color-green-600: #204532;
+  --color-green-700: #1B3B2B;
+  --color-green-800: #162E22;
+  --color-green-950: #0D1C14;
+}
+
+/* Ensure cross-device compatibility, particularly for older mobile viewport / WebKit rendering engine */
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-brand-bg);
+  color: #1f2937; /* 차분한 다크 그레이 텍스트 */
+  
+  /* Critical font antialiasing and readability improvements for old smartphones and Android System WebViews */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  
+  /* Fix touch highlights in older WebKit versions */
+  -webkit-tap-highlight-color: transparent;
+  
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Printing styling to make pdf capture simpler if needed */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

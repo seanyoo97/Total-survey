@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.token.email)) ||
+        request.auth.token.email == 'seanyoo97@gmail.com'
+      );
+    }
+
+    // 2027 훈련 수요조사
+    match /surveys_demand/{docId} {
+      allow create: if true; // 누구나 설문 제출 가능
+      allow read, delete: if isAdmin();
+    }
+
+    // 현업적용도 - 기업용
+    match /surveys_field_corp/{docId} {
+      allow create: if true; // 누구나 설문 제출 가능
+      allow read, delete: if isAdmin();
+    }
+
+    // 현업적용도 - 훈련생용
+    match /surveys_field_trainee/{docId} {
+      allow create: if true; // 누구나 설문 제출 가능
+      allow read, delete: if isAdmin();
+    }
+
+    // FGI 설문
+    match /surveys_fgi/{docId} {
+      allow create: if true; // 누구나 설문 제출 가능
+      allow read, delete: if isAdmin();
+    }
+
+    // 관리자 마스터 컬렉션
+    match /admins/{uid} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin() || (isSignedIn() && request.auth.token.email == 'seanyoo97@gmail.com' && request.auth.uid == uid);
+    }
+  }
+}

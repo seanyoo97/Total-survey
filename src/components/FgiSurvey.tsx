@@ -5,6 +5,26 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
 import { ChevronLeft, ChevronRight, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
 
+const koreaRegions: Record<string, string[]> = {
+  "서울특별시": ["강남구", "강동구", "강북구", "강서구", "관악구", "광진구", "구로구", "금천구", "노원구", "도봉구", "동대문구", "동작구", "마포구", "서대문구", "서초구", "성동구", "성북구", "송파구", "양천구", "영등포구", "용산구", "은평구", "종로구", "중구", "중랑구"],
+  "부산광역시": ["강서구", "금정구", "기장군", "남구", "동구", "동래구", "부산진구", "북구", "사상구", "사하구", "서구", "수영구", "연제구", "영도구", "중구", "해운대구"],
+  "대구광역시": ["남구", "달서구", "달성군", "동구", "북구", "서구", "수성구", "중구", "군위군"],
+  "인천광역시": ["강화군", "계양구", "남동구", "동구", "미추홀구", "부평구", "서구", "연수구", "옹진군", "중구"],
+  "광주광역시": ["광산구", "남구", "동구", "북구", "서구"],
+  "대전광역시": ["대덕구", "동구", "서구", "유성구", "중구"],
+  "울산광역시": ["남구", "동구", "북구", "울주군", "중구"],
+  "세종특별자치시": ["세종특별자치시"],
+  "경기도": ["가평군", "고양시 덕양구", "고양시 일산동구", "고양시 일산서구", "과천시", "광명시", "광주시", "구리시", "군포시", "김포시", "남양주시", "동두천시", "부천시", "성남시 분당구", "성남시 수정구", "성남시 중원구", "수원시 권선구", "수원시 영통구", "수원시 장안구", "수원시 팔달구", "시흥시", "안산시 단원구", "안산시 상록구", "안성시", "안양시 동안구", "안양시 만안구", "양주시", "양평군", "여주시", "연천군", "오산시", "용인시 기흥구", "용인시 수지구", "용인시 처인구", "의왕시", "의정부시", "이천시", "파주시", "평택시", "포천시", "하남시", "화성시"],
+  "강원특별자치도": ["강릉시", "고성군", "동해시", "삼척시", "속초시", "양구군", "양양군", "영월군", "원주시", "인제군", "정선군", "철원군", "춘천시", "태백시", "평창군", "홍천군", "화천군", "횡성군"],
+  "충청북도": ["괴산군", "단양군", "보은군", "영동군", "옥천군", "음성군", "제천시", "증평군", "진천군", "청주시 상당구", "청주시 서원구", "청주시 청원구", "청주시 흥덕구", "충주시"],
+  "충청남도": ["계룡시", "공주시", "금산군", "논산시", "당진시", "보령시", "부여군", "서산시", "서천군", "아산시", "예산군", "천안시 동남구", "천안시 서북구", "청양군", "태안군", "홍성군"],
+  "전북특별자치도": ["고창군", "군산시", "김제시", "남원시", "무주군", "부안군", "순창군", "완주군", "익산시", "임실군", "장수군", "전주시 덕진구", "전주시 완산구", "정읍시", "진안군"],
+  "전라남도": ["강진군", "고흥군", "곡성군", "광양시", "구례군", "나주시", "담양군", "목포시", "무안군", "보성군", "순천시", "신안군", "여수시", "영광군", "영암군", "완도군", "장성군", "장흥군", "진도군", "함평군", "해남군", "화순군"],
+  "경상북도": ["경산시", "경주시", "고령군", "구미시", "김천시", "문경시", "봉화군", "상주시", "성주군", "안동시", "영덕군", "영양군", "영주시", "영천시", "예천군", "울릉군", "울진군", "의성군", "청도군", "청송군", "칠곡군", "포항시 남구", "포항시 북구"],
+  "경상남도": ["거제시", "거창군", "고성군", "김해시", "남해군", "밀양시", "사천시", "산청군", "양산시", "의령군", "진주시", "창녕군", "창원시 마산합포구", "창원시 마산회원구", "창원시 성산구", "창원시 의창구", "창원시 진해구", "통영시", "하동군", "함안군", "함양군", "합천군"],
+  "제주특별자치도": ["서귀포시", "제주시"]
+};
+
 export default function FgiSurvey() {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
@@ -90,7 +110,7 @@ export default function FgiSurvey() {
         }
         return "";
       case 2:
-        if (!formData.q1_1 || !formData.q1_2 || formData.q1_3.length === 0 || !formData.q2_1 || !formData.q2_2 || !formData.q2_3 || formData.q2_4.length === 0 || !formData.q2_5.trim()) {
+        if (!formData.q1_1 || !formData.q1_2 || formData.q1_3.length === 0 || !formData.q2_1 || !formData.q2_2 || !formData.q2_3 || formData.q2_4.length === 0) {
           return "모든 문항에 답변해 주세요.";
         }
         if (formData.q1_3.includes('기타') && !formData.q1_3_other.trim()) return "1-3 '기타'의 상세 내용을 입력해주세요.";
@@ -126,7 +146,7 @@ export default function FgiSurvey() {
     }
 
     // Stage 2
-    if (!formData.q1_1 || !formData.q1_2 || formData.q1_3.length === 0 || !formData.q2_1 || !formData.q2_2 || !formData.q2_3 || formData.q2_4.length === 0 || !formData.q2_5.trim()) {
+    if (!formData.q1_1 || !formData.q1_2 || formData.q1_3.length === 0 || !formData.q2_1 || !formData.q2_2 || !formData.q2_3 || formData.q2_4.length === 0) {
       return "[2단계] 모든 문항에 답변해 주세요.";
     }
     if (formData.q1_3.includes('기타') && !formData.q1_3_other.trim()) return "[2단계] 1-3 '기타'의 상세 내용을 입력해주세요.";
@@ -229,13 +249,9 @@ export default function FgiSurvey() {
             <CheckCircle2 size={36} />
           </div>
           <h2 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">설문에 참여해 주셔서 대단히 감사합니다.</h2>
-          <p className="text-gray-500 mb-8 text-xs leading-relaxed font-light whitespace-pre-line px-2 text-center">
-            답변해 주신 소중한 데이터는 저희 공동훈련센터 교육 과정 발전과 신규 교과 설계 분석을 위한 소중한 밑거름이 될 것입니다.
-          </p>
           <button
             onClick={() => navigate('/')}
-            className="w-full py-4.5 bg-teal-600 hover:bg-teal-700 active:scale-98 text-white rounded-xl font-extrabold text-sm shadow-md transition-all duration-200 cursor-pointer block border-none outline-none text-center"
-            style={{ display: 'block', visibility: 'visible', opacity: 1, color: '#ffffff', backgroundColor: '#0d9488' }}
+            className="w-full mt-6 py-4.5 bg-teal-600 hover:bg-teal-700 active:scale-98 text-white rounded-xl font-extrabold text-sm shadow-md transition-all duration-200 cursor-pointer block border-none outline-none text-center active:scale-[0.98] min-h-[48px] break-keep"
           >
             통합 설문조사 포털 홈으로 이동
           </button>
@@ -245,11 +261,11 @@ export default function FgiSurvey() {
   }
 
   const levels = [
-    "① 직무 기초 이해 수준",
-    "② 기본 실무 수행 수준",
-    "③ 독립 업무 수행 수준",
-    "④ 현장 문제 해결 수준",
-    "⑤ 전문기술 활용 및 지도 수준"
+    "직무 기초 이해 수준",
+    "기본 실무 수행 수준",
+    "독립 업무 수행 수준",
+    "현장 문제 해결 수준",
+    "전문기술 활용 및 지도 수준"
   ];
 
   return (
@@ -258,6 +274,18 @@ export default function FgiSurvey() {
         {/* Banner */}
         <div className="bg-gradient-to-r from-emerald-600 to-teal-800 text-white p-6 sm:p-8">
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">컨소시엄 협약업체 FGI(Focus Group Interview)</h1>
+          <p className="text-emerald-50/90 text-[11px] sm:text-xs font-light leading-relaxed mb-4">
+            안녕하십니까?<br/>
+            바쁘신 가운데 귀한 시간을 내어 본 설문에 응답해 주셔서 감사합니다.<br/>
+            한국전기기술인협회 인적자원개발팀에서는 국가인적자원개발컨소시엄 사업의 훈련품질 제고 및 협약기업 수요를 반영한 훈련과정 개발을 위하여 FGI(Focus Group Interview)를 실시하고 있습니다.<br/>
+            본 조사는 협약기업의 현장 목소리를 청취하고, 재직근로자의 직무역량 강화에 실질적으로 도움이 되는 훈련과정을 기획하는데 중요한 기초자료로 활용될 예정입니다.<br/>
+            바쁘시더라도 각 문항에 대하여 성실하게 응답해 주시기 바랍니다.<br/>
+            감사합니다.
+          </p>
+          <p className="text-emerald-50/90 text-[11px] sm:text-xs font-light leading-relaxed">
+            ※ 본 조사와 관련된 문의나 의견이 있으시면 아래로 연락 주시기 바랍니다.<br/>
+            &nbsp;&nbsp;□ 조사기관 : 한국전기기술인협회 교육원 인적자원개발팀(02-2182-0781~9)
+          </p>
         </div>
 
         {/* Progress Tracker */}
@@ -276,7 +304,7 @@ export default function FgiSurvey() {
           </span>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 sm:p-10">
+        <form onSubmit={(e) => e.preventDefault()} className="p-6 sm:p-10">
           {errorMessage && (
             <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl flex items-center gap-2">
               <AlertTriangle size={18} />
@@ -349,29 +377,41 @@ export default function FgiSurvey() {
                     placeholder="예: 부장"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">회사소재지 (시/도) *</label>
-                  <input
-                    type="text"
-                    name="companyAddressCity"
-                    required
-                    value={formData.companyAddressCity}
-                    onChange={handleChange}
-                    className="w-full border border-gray-200 focus:border-emerald-600 outline-none py-2 px-3 rounded-lg text-xs"
-                    placeholder="예: 서울, 경기, 부산 등"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">회사소재지 (시/군/구) *</label>
-                  <input
-                    type="text"
-                    name="companyAddressDistrict"
-                    required
-                    value={formData.companyAddressDistrict}
-                    onChange={handleChange}
-                    className="w-full border border-gray-200 focus:border-emerald-600 outline-none py-2 px-3 rounded-lg text-xs"
-                    placeholder="예: 강남구, 안양시 등"
-                  />
+                <div className="sm:col-span-2">
+                  <label className="block text-xs font-bold text-gray-700 mb-1">회사소재지 *</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <select
+                      name="companyAddressCity"
+                      required
+                      value={formData.companyAddressCity}
+                      onChange={(e) => {
+                        setFormData(prev => ({
+                          ...prev,
+                          companyAddressCity: e.target.value,
+                          companyAddressDistrict: '' // Reset district when city changes
+                        }));
+                      }}
+                      className="w-full border border-gray-200 focus:border-emerald-600 outline-none py-2 px-3 rounded-lg text-xs"
+                    >
+                      <option value="">시/도 선택</option>
+                      {Object.keys(koreaRegions).map(city => (
+                        <option key={city} value={city}>{city}</option>
+                      ))}
+                    </select>
+                    <select
+                      name="companyAddressDistrict"
+                      required
+                      value={formData.companyAddressDistrict}
+                      onChange={handleChange}
+                      disabled={!formData.companyAddressCity}
+                      className="w-full border border-gray-200 focus:border-emerald-600 outline-none py-2 px-3 rounded-lg text-xs disabled:bg-gray-100"
+                    >
+                      <option value="">시/군/구 선택</option>
+                      {formData.companyAddressCity && koreaRegions[formData.companyAddressCity]?.map(district => (
+                        <option key={district} value={district}>{district}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">연락처 *</label>
@@ -403,14 +443,14 @@ export default function FgiSurvey() {
                   <label className="block text-sm font-bold text-gray-700 mb-2">업체 형태 *</label>
                   <div className="flex gap-4">
                     {['대규모기업', '우선지원기업'].map(opt => (
-                      <label key={opt} className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-gray-700">
+                      <label key={opt} className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-gray-700 active:scale-[0.98] min-h-[48px] break-keep">
                         <input
                           type="radio"
                           name="companyType"
                           value={opt}
                           checked={formData.companyType === opt}
                           onChange={handleChange}
-                          className="w-4 h-4 text-emerald-600"
+                          className="w-4 h-4 text-emerald-600 flex-shrink-0"
                         />
                         <span>{opt}</span>
                       </label>
@@ -423,14 +463,14 @@ export default function FgiSurvey() {
                   <div className="flex flex-wrap gap-3">
                     {['설계', '감리', '안전관리', '기타'].map(opt => (
                       <div key={opt} className="flex items-center gap-2">
-                        <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-gray-700">
+                        <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-gray-700 active:scale-[0.98] min-h-[48px] break-keep">
                           <input
                             type="radio"
                             name="industry"
                             value={opt}
                             checked={formData.industry === opt}
                             onChange={handleChange}
-                            className="w-4 h-4 text-emerald-600"
+                            className="w-4 h-4 text-emerald-600 flex-shrink-0"
                           />
                           <span>{opt}</span>
                         </label>
@@ -536,7 +576,7 @@ export default function FgiSurvey() {
                             type="checkbox"
                             checked={isChecked}
                             onChange={() => handleMultiCheckboxChange('q1_3', opt)}
-                            className="w-4 h-4 text-emerald-600 shrink-0"
+                            className="w-4 h-4 text-emerald-600 shrink-0 flex-shrink-0"
                           />
                           <span>{opt}</span>
                         </label>
@@ -656,7 +696,7 @@ export default function FgiSurvey() {
                             type="checkbox"
                             checked={isChecked}
                             onChange={() => handleMultiCheckboxChange('q2_4', opt)}
-                            className="w-4 h-4 text-emerald-600 shrink-0"
+                            className="w-4 h-4 text-emerald-600 shrink-0 flex-shrink-0"
                           />
                           <span>{opt}</span>
                         </label>
@@ -678,7 +718,7 @@ export default function FgiSurvey() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">2-5. 귀사의 주요 수행 직무에 따라 필요하다고 생각하는 교육 분야는 무엇입니까? *</label>
+                <label className="block text-sm font-bold text-gray-700 mb-2">2-5. 귀사의 주요 수행 직무에 따라 필요하다고 생각하는 교육 분야는 무엇입니까?</label>
                 <textarea
                   name="q2_5"
                   value={formData.q2_5}
@@ -718,7 +758,7 @@ export default function FgiSurvey() {
                               type="checkbox"
                               checked={isChecked}
                               onChange={() => handleMultiCheckboxChange('q3_1', opt)}
-                              className="w-4 h-4 text-emerald-600 shrink-0"
+                              className="w-4 h-4 text-emerald-600 shrink-0 flex-shrink-0"
                             />
                             <span>{opt}</span>
                           </label>
@@ -826,7 +866,7 @@ export default function FgiSurvey() {
                               type="checkbox"
                               checked={isChecked}
                               onChange={() => handleMultiCheckboxChange('q3_4', opt)}
-                              className="w-4 h-4 text-emerald-600"
+                              className="w-4 h-4 text-emerald-600 flex-shrink-0"
                             />
                             <span>{opt}</span>
                           </label>
@@ -868,7 +908,7 @@ export default function FgiSurvey() {
             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
               <div className="border-b border-gray-100 pb-3">
                 <h3 className="text-lg font-bold text-gray-900">4. 협회 컨소시엄 훈련 운영 개선 의견</h3>
-                <p className="text-xs text-gray-500">마지막 개선 통계 취합 항목입니다.</p>
+                <p className="text-xs text-gray-500">마지막 항목입니다.</p>
               </div>
 
               <div>
@@ -907,12 +947,12 @@ export default function FgiSurvey() {
                       <div key={opt} className={`flex flex-col items-center justify-center p-2 text-center text-xs font-semibold rounded-xl border cursor-pointer select-none transition min-h-[64px] ${
                           isChecked ? 'border-emerald-600 bg-emerald-50 text-emerald-850' : 'border-gray-200'
                         }`}>
-                        <label className="flex flex-col items-center justify-center cursor-pointer w-full h-full">
+                        <label className="flex flex-col items-center justify-center cursor-pointer w-full h-full active:scale-[0.98] min-h-[48px] break-keep">
                           <input
                             type="checkbox"
                             checked={isChecked}
                             onChange={() => handleMultiCheckboxChange('q4_2', opt)}
-                            className="w-4 h-4 text-emerald-600 mb-1"
+                            className="w-4 h-4 text-emerald-600 mb-1 flex-shrink-0"
                           />
                           <span className="text-[10px] sm:text-[11px] font-bold leading-tight mt-1">{opt}</span>
                         </label>
@@ -979,9 +1019,10 @@ export default function FgiSurvey() {
               </button>
             ) : (
               <button
-                type="submit"
-                disabled={loading}
-                className="flex items-center gap-1.5 bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl text-xs font-black tracking-wider shadow-md transition disabled:opacity-50"
+                type="button"
+                onClick={handleSubmit}
+                disabled={loading || !!validateStep()}
+                className="flex items-center gap-1.5 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-300 disabled:hover:bg-gray-300 disabled:cursor-not-allowed text-white px-6 py-3 rounded-xl text-xs font-black tracking-wider shadow-md transition"
               >
                 <span>FGI 설문지 제출</span>
                 {loading ? <span className="animate-spin text-[10px]">■</span> : <ArrowRight size={16} />}

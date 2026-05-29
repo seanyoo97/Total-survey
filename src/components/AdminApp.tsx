@@ -554,47 +554,46 @@ export default function AdminApp() {
         companyName: "회사명",
         traineeName: "수강생성명",
         q1_1: "Q1-1_응답자직위",
-        q1_2: "Q1-2_비즈니스분야",
-        q1_3: "Q1-3_근로자규모",
-        q1_4: "Q1-4_과정이해도",
-        q2_1: "Q2-1_참여훈련과정명",
-        q2_2: "Q2-2_과정선택이유",
-        q2_3: "Q2-3_과정이수도움",
-        q2_4: "Q2-4_장비실습정합성",
-        q2_5: "Q2-5_수강회사측지원",
-        q2_6: "Q2-6_교육후근무태도",
-        q2_7: "Q2-7_비즈니스기여도(정성)",
-        q3_1: "Q3-1_업무대응성향상",
-        q3_2: "Q3-2_공정품질개선",
-        q3_3: "Q3-3_안전사고예방",
-        q3_4: "Q3-4_투자비용효과",
-        q3_5: "Q3-5_재추천의향",
-        q3_6: "Q3-6_적용사례(정성)",
-        q3_7: "Q3-7_기타의견",
+        q1_1_final: "Q1-1_직위(상세)",
+        q1_2: "Q1-2_주요업종",
+        q1_2_final: "Q1-2_업종(상세)",
+        q1_3: "Q1-3_상시근로자수",
+        q1_4: "Q1-4_업무변화관찰수준",
+        q2_1: "Q2-1_학습내용지원여부",
+        q2_2: "Q2-2_제공지원방식",
+        q2_2_final: "Q2-2_지원방식(상세)",
+        q2_3: "Q2-3_훈련과정확대의향",
+        q2_4: "Q2-4_후속지원사항",
+        q3_1: "Q3-1_업무적용도",
+        q3_2: "Q3-2_업무수행체계성",
+        q3_3: "Q3-3_업무성과향상도",
+        q3_4: "Q3-4_문제해결기여도",
+        q3_5: "Q3-5_조직기여도",
+        q3_6: "Q3-6_업무개선사례",
+        q3_7: "Q3-7_개선보완사항",
         createdAt: "제출일시"
       };
 
       const TRAINEE_HEADER_MAP: { [key: string]: string } = {
-        q1_1: "Q1-1_비즈니스분야",
+        q1_1: "Q1-1_응답업무분야",
+        q1_1_final: "Q1-1_비즈니스분야(기타상세포함)",
         q1_2: "Q1-2_회사근속기간",
-        q1_3: "Q1-3_회사근로자규모",
-        q2_1: "Q2-1_수강과정",
-        q2_2: "Q2-2_수강동기부합성",
-        q2_3: "Q2-3_업무대비난이도",
-        q2_4: "Q2-4_실무유용성",
-        q2_5: "Q2-5_실습시간충분성",
-        q2_6: "Q2-6_강사전문성",
-        q3_1: "Q3-1_수강목적달성도",
-        q3_2: "Q3-2_주변추천의향",
-        q4_1: "Q4-1_수행수준변화",
-        q4_2: "Q4-2_과정이수의의",
-        q5_1: "Q5-1_회사상사진원지원",
-        q5_2: "Q5-2_인접동료격려",
-        q6_1: "Q6-1_회사측업무배려",
-        q6_2: "Q6-2_교육시간조정률",
-        q7_1: "Q7-1_실제업무적용",
-        q7_2: "Q7-2_업무생산성향상",
-        q8: "Q8_업무적용성공사례(정성)",
+        q2_1: "Q2-1_업무관련성",
+        q2_2: "Q2-2_업무유용성",
+        q2_3: "Q2-3_실용적용성",
+        q2_4: "Q2-4_업무향상도",
+        q2_5: "Q2-5_성과기여도",
+        q3_1: "Q3-1_자기효능감1",
+        q3_2: "Q3-2_자기효능감2",
+        q3_3: "Q3-3_전이동기1",
+        q3_4: "Q3-4_전이동기2",
+        q3_5: "Q3-5_전이설계1",
+        q3_6: "Q3-6_전이설계2",
+        q3_7: "Q3-7_상사/동료지원1",
+        q3_8: "Q3-8_상사/동료지원2",
+        q3_9: "Q3-9_변화가능성1",
+        q3_10: "Q3-10_변화가능성2",
+        q4: "Q4_주관식의견(정성)",
         createdAt: "제출일시"
       };
 
@@ -1005,8 +1004,8 @@ export default function AdminApp() {
           ];
 
           const cityPool = [
-            "경기 안양시 동안구 시민대로", "부산 사하구 신평동", "광주 북구 첨단과기로", "대전 유성구 대학로",
-            "충남 천안시 서북구", "충북 청주시 흥덕구", "세종특별자치시 도담동", "울산 남구 벤처로"
+            "경기 안양시", "부산 사하구", "광주 북구", "대전 유성구",
+            "충남 천안시", "충북 청주시", "세종특별자치시", "울산 남구"
           ];
 
           // 1. Demand survey mock data
@@ -1149,27 +1148,29 @@ export default function AdminApp() {
 
           const sampleTrainees = [];
           for (let i = 0; i < 16; i++) {
+            const isOther = Math.random() > 0.8;
+            const q1_1_val = isOther ? '기타' : getRandomItem(['설계', '감리', '안전관리', '진단·점검']);
             sampleTrainees.push({
-              q1_1: getRandomItem(['설계', '감리', '안전관리', '진단·점검', '기타']),
-              q1_2: getRandomItem(['1년 이하', '1~3년', '3~5년', '5년 이상']),
-              q1_3: getRandomItem(['10명 미만', '10명~50명 미만', '50명~100명 미만', '100명~300명 미만', '300명 이상']),
-              q2_1: getRandomSubArray(COURSES_LIST, 1, 2),
+              q1_1: q1_1_val,
+              q1_1_other: isOther ? '설비 유지보수 전담' : '',
+              q1_1_final: isOther ? '기타(설비 유지보수 전담)' : q1_1_val,
+              q1_2: getRandomItem(['1～5년', '6～10년', '11～15년', '16～20년', '21년 이상']),
+              q2_1: getRandomScore(),
               q2_2: getRandomScore(),
               q2_3: getRandomScore(),
               q2_4: getRandomScore(),
               q2_5: getRandomScore(),
-              q2_6: getRandomScore(),
               q3_1: getRandomScore(),
               q3_2: getRandomScore(),
-              q4_1: getRandomScore(),
-              q4_2: getRandomScore(),
-              q5_1: getRandomScore(),
-              q5_2: getRandomScore(),
-              q6_1: getRandomScore(),
-              q6_2: getRandomScore(),
-              q7_1: getRandomScore(),
-              q7_2: getRandomScore(),
-              q8: getRandomItem(traineeQ8_Pool),
+              q3_3: getRandomScore(),
+              q3_4: getRandomScore(),
+              q3_5: getRandomScore(),
+              q3_6: getRandomScore(),
+              q3_7: getRandomScore(),
+              q3_8: getRandomScore(),
+              q3_9: getRandomScore(),
+              q3_10: getRandomScore(),
+              q4: getRandomItem(traineeQ8_Pool),
               createdAt: new Date().toISOString()
             });
           }
@@ -1180,6 +1181,14 @@ export default function AdminApp() {
             "현장의 격무와 인력 부족으로 정규 며칠 교육 파견이 상시적인 고충 요소입니다. 이 공백을 슬기롭게 메우기 위한 1일 집중 교차 세션이나 동영상 사전 이러닝 보완책이 한층 정교하게 입안되기를 기대합니다.",
             "초급 기사들의 장비 작동 미숙이 안전 안전사고의 최대 원인인데, 실장 수준의 모의 사고 분석 및 복구 훈련이 교과 과정에 늘어나 학습 효과가 큽니다. 시공 중심의 전문 특성화 과정을 한층 확대 개방해주시면 정기 파견하겠습니다.",
             "수강생들의 교육 후 현업 적용도 성과가 가시적이라 만족스럽니다. 소수 인원이나 원격지에 위치한 기업을 위해 장비를 가지고 찾아가는 '이동식 맞춤 지도' 프로그램도 개설 검토해주시기를 부탁합니다."
+          ];
+
+          const fgiQ2_5_Pool = [
+            "노후 설비 교체 및 KEC 규정에 따른 접지/피뢰 설비 설계 실무와 관련된 심화 교육이 필요합니다.",
+            "최신 태양광 발전설비 및 ESS(에너지저장장치) 시스템 점검 및 유지보수 특화 과정이 시급합니다.",
+            "수배전반 조작 및 정전 수전 발생 시 위기 대처 시뮬레이션 위주의 실습 교육이 가장 필요하다고 봅니다.",
+            "PLC 제어 및 스마트 자동화 설비 연동 오류를 디버깅할 수 있는 트러블슈팅 전문 과정 편성을 희망합니다.",
+            "신입 직원들을 위한 고압/특고압 안전 수칙 및 절연 파괴 예방 사례 실습 교육이 필수적입니다."
           ];
 
           const sampleFgis = [];
@@ -1193,28 +1202,28 @@ export default function AdminApp() {
             sampleFgis.push({
               companyName: comp,
               companyType: getRandomItem(['대규모 기업', '우선지원 대상기업']),
-              companyAddress: city,
+              companyAddressCity: city,
               industry: getRandomItem(['설계', '감리', '안전관리', '기타']),
               contactName: name,
               department: dept,
               position: pos,
               tel: `02-${3000 + i}-4567`,
               email: `${getRandomItem(['ad', 'ko', 'pt', 'tech', 'eng'])}@${getRandomItem(['con.co.kr', 'hanmail.net', 'naver.com'])}`,
-              q1_1: getRandomItem(['1~5명', '6~10명', '11~20명', '21~30명', '31명 이상']),
-              q1_2: getRandomItem(['초급 위주(1-3년)', '중급 위주(4-7년)', '고급/베테랑 위주(8년이상)', '비교적 균등한 편']),
-              q1_3: getRandomSubArray(['전기설비 설계 및 도면 검토', '감리 및 품질 관리', '상시 안전관리 대행', '안전 진단 및 계측 운영', '기타 기술 지도'], 1, 3),
-              q2_1: getRandomItem(['신입 사원(1~3년차)', '실무 중견 사원(4~7년차)', '관리자/기술팀장(8년차 이상)', '기타']),
-              q2_2: getRandomItem(['① 매우 미흡', '② 다소 미흡', '③ 보통 수준', '④ 다소 우수', '⑤ 매우 우수']),
-              q2_3: getRandomItem(['③ 보통 수준', '④ 다소 우수', '⑤ 매우 우수']),
-              q2_4: getRandomSubArray(['디지털 계측 제동법', '고압 안전 차단 절차', 'PLC 래더 설계 디버깅', 'KEC 기준선 접지 분석', '열화상 감지 예찰 기술'], 1, 3),
-              q2_5: getRandomSubArray(['전기배선 설계/도면 실무', '수배전반 오사고 복원 훈련', '소방전기 특수가압 시스템', 'PLC 동력 제동 마스터'], 1, 2),
-              q3_1: getRandomSubArray(['교육 장비의 최신 도보성', '강사진의 풍부한 트러블슈팅 경험', '교육 센터 지리적 위치 마찰', '국비 전액 지원 신뢰성'], 1, 2),
-              q3_2: getRandomSubArray(['업무 파견 시 작업 대체 공백 부담', '사내 경영진의 훈련 중요성 편중', '원거리 출장 경비'], 1, 2),
-              q3_3: getRandomItem(['1일 과정 (8시간)', '2~3일 단기 집중 (16~24시간)', '야간/주말 분절 이수']),
-              q3_4: getRandomSubArray(['상반기 (3~6월)', '하반기 (9~11월)'], 1, 2),
-              q3_5: getRandomItem(['1~2명', '3~5명', '6~10명 이상']),
-              q4_1: getRandomItem(['① 매우 미흡', '② 다소 미흡', '③ 보통 수준', '④ 다소 우수', '⑤ 매우 우수']),
-              q4_2: getRandomSubArray(['최신형 고사양 계측 시설 연계 교체', '온라인 사전 과정 및 이러닝 개설', '기업 전용 맞춤형 방문 프로그램 편성'], 1, 2),
+              q1_1: getRandomItem(['1~5명', '6~10명', '11~20명', '21~50명', '51명 이상']),
+              q1_2: getRandomItem(['3년 이하 근로자 중심', '4~6년 경력자 중심', '7년 이상 숙련자 중심', '고르게 분포']),
+              q1_3: getRandomSubArray(['전기안전관리', '전력시설물 설계', '전력시설물 감리', '전기공사 시공관리', '수배전설비 운영', '자동제어ㆍPLC', '전기설비 진단ㆍ점검', '기타'], 1, 3),
+              q2_1: getRandomItem(['저연차(3년 이하)', '중간연차(4~10년)', '고연차(11년 이상)']),
+              q2_2: getRandomItem(['직무 기초 이해 수준', '기본 실무 수행 수준', '독립 업무 수행 수준', '현장 문제 해결 수준', '전문기술 활용 및 지도 수준']),
+              q2_3: getRandomItem(['직무 기초 이해 수준', '기본 실무 수행 수준', '독립 업무 수행 수준', '현장 문제 해결 수준', '전문기술 활용 및 지도 수준']),
+              q2_4: getRandomSubArray(['직무 전문지식', '법령기준 이해', '실무적용 능력', '문제상황 조치', '안전관리 책임', '기타'], 1, 3),
+              q2_5: getRandomItem(fgiQ2_5_Pool),
+              q3_1: getRandomSubArray(['훈련 내용의 적합성', '업무 연관성', '훈련 일정', '비용 지원 여부', '훈련 장소', '기타'], 1, 2),
+              q3_2: getRandomSubArray(['업무 공백 발생', '대체인력 부족', '직무별 맞춤교육 부족', '사내 교육 시설 부족', '기업 인식 부족', '예산 부족', '접근성 제약', '기타'], 1, 2),
+              q3_3: getRandomItem(['1일(8H)', '2일(16H)', '3일(24H)', '4일(32H)', '5일(40H) 이상']),
+              q3_4: getRandomSubArray(['2~4월', '5~7월', '8~11월'], 1, 2),
+              q3_5: getRandomItem(['1~2명', '3~5명', '6~10명', '11~20명', '21명 이상']),
+              q4_1: getRandomItem(['5', '4', '3', '2', '1']),
+              q4_2: getRandomSubArray(['교육 일정 다양화', '실습 중심 교육 확대', '최신 기술과정 확대', '강사 전문성 강화', '교육시설 및 환경 개선', '기타'], 1, 2),
               q4_3: getRandomItem(fgiQ4_3_Pool),
               createdAt: new Date().toISOString()
             });
@@ -1327,7 +1336,8 @@ export default function AdminApp() {
       const processVal = (v: any) => {
         if (!v) return;
         const strVal = typeof v === 'object' ? (v.label || v.name || JSON.stringify(v)) : String(v);
-        const normalized = strVal.startsWith('기타(') ? '기타' : strVal;
+        const cleanedStr = strVal.replace(/[①②③④⑤]\s*/g, '');
+        const normalized = cleanedStr.startsWith('기타(') ? '기타' : cleanedStr;
         counts[normalized] = (counts[normalized] || 0) + 1;
       };
 
@@ -1539,12 +1549,20 @@ export default function AdminApp() {
     if (total === 0) return { 
       coreScores: [], observeData: [],
       corpObserveData: [], corpIndustryData: [], corpEmplData: [],
-      corpPurposeData: [], corpNecessityData: [], corpSupportData: [],
-      corpSupportTypeData: [], corpExpansionData: []
+      corpQ2_1: [], corpQ2_2: [], corpQ2_3: [],
+      qaGroups: {} as Record<string, { prefix: string, text: string }[]>
     };
 
     let total3_1 = 0, total3_2 = 0, total3_3 = 0, total3_4 = 0, total3_5 = 0;
     const observes: { [key: string]: number } = {};
+    const qaGroups: Record<string, { prefix: string, text: string }[]> = {
+      '1-1. 직위 기타의견': [],
+      '1-2. 사업분야 기타의견': [],
+      '2-2. 지원방식 기타의견': [],
+      '2-4. 후속지원 필요사항': [],
+      '3-6. 업무개선 사례': [],
+      '3-7. 보완/개선 사항': []
+    };
 
     fieldCorps.forEach(c => {
       total3_1 += parseFloat(c.q3_1) || 3;
@@ -1552,15 +1570,24 @@ export default function AdminApp() {
       total3_3 += parseFloat(c.q3_3) || 3;
       total3_4 += parseFloat(c.q3_4) || 3;
       total3_5 += parseFloat(c.q3_5) || 3;
+      
       if (c.q1_4) observes[c.q1_4] = (observes[c.q1_4] || 0) + 1;
+
+      const prefix = c.companyName || '익명업체';
+      if (c.q1_1_other) qaGroups['1-1. 직위 기타의견'].push({ prefix, text: c.q1_1_other });
+      if (c.q1_2_other) qaGroups['1-2. 사업분야 기타의견'].push({ prefix, text: c.q1_2_other });
+      if (c.q2_2_other) qaGroups['2-2. 지원방식 기타의견'].push({ prefix, text: c.q2_2_other });
+      if (c.q2_4) qaGroups['2-4. 후속지원 필요사항'].push({ prefix, text: c.q2_4 });
+      if (c.q3_6) qaGroups['3-6. 업무개선 사례'].push({ prefix, text: c.q3_6 });
+      if (c.q3_7) qaGroups['3-7. 보완/개선 사항'].push({ prefix, text: c.q3_7 });
     });
 
     const coreScores = [
-      { metric: "현업적용", score: Number((total3_1 / total).toFixed(2)) },
-      { metric: "체계운영", score: Number((total3_2 / total).toFixed(2)) },
-      { metric: "성과성장", score: Number((total3_3 / total).toFixed(2)) },
+      { metric: "업무 적용도", score: Number((total3_1 / total).toFixed(2)) },
+      { metric: "업무수행체계성", score: Number((total3_2 / total).toFixed(2)) },
+      { metric: "업무성과 향상", score: Number((total3_3 / total).toFixed(2)) },
       { metric: "문제해결", score: Number((total3_4 / total).toFixed(2)) },
-      { metric: "팀조직기여", score: Number((total3_5 / total).toFixed(2)) },
+      { metric: "조직 기여도", score: Number((total3_5 / total).toFixed(2)) },
     ];
 
     const observeData = Object.keys(observes).map(name => ({ name, value: observes[name] }));
@@ -1571,11 +1598,10 @@ export default function AdminApp() {
       corpObserveData: aggregateField(fieldCorps, 'q1_4'),
       corpIndustryData: aggregateField(fieldCorps, 'q1_2'),
       corpEmplData: aggregateField(fieldCorps, 'q1_3'),
-      corpPurposeData: aggregateField(fieldCorps, 'q2_2'),
-      corpNecessityData: aggregateField(fieldCorps, 'q2_3'),
-      corpSupportData: aggregateField(fieldCorps, 'q2_4'),
-      corpSupportTypeData: aggregateField(fieldCorps, 'q2_5'),
-      corpExpansionData: aggregateField(fieldCorps, 'q2_6')
+      corpQ2_1: aggregateField(fieldCorps, 'q2_1'),
+      corpQ2_2: aggregateField(fieldCorps, 'q2_2'),
+      corpQ2_3: aggregateField(fieldCorps, 'q2_3'),
+      qaGroups
     };
   };
 
@@ -1597,32 +1623,32 @@ export default function AdminApp() {
     const careers: { [key: string]: number } = {};
 
     fieldTrainees.forEach(t => {
-      relDocs += parseFloat(t.q2_2) || 3;
-      useDocs += parseFloat(t.q2_3) || 3;
-      pracDocs += parseFloat(t.q2_4) || 3;
-      skillDocs += parseFloat(t.q2_5) || 3;
-      orgDocs += parseFloat(t.q2_6) || 3;
+      relDocs += parseFloat(t.q2_1) || 3;
+      useDocs += parseFloat(t.q2_2) || 3;
+      pracDocs += parseFloat(t.q2_3) || 3;
+      skillDocs += parseFloat(t.q2_4) || 3;
+      orgDocs += parseFloat(t.q2_5) || 3;
 
       effDocs += ((parseFloat(t.q3_1) || 3) + (parseFloat(t.q3_2) || 3)) / 2;
-      motDocs += ((parseFloat(t.q4_1) || 3) + (parseFloat(t.q4_2) || 3)) / 2;
-      desDocs += ((parseFloat(t.q5_1) || 3) + (parseFloat(t.q5_2) || 3)) / 2;
-      peerDocs += ((parseFloat(t.q6_1) || 3) + (parseFloat(t.q6_2) || 3)) / 2;
-      chgDocs += ((parseFloat(t.q7_1) || 3) + (parseFloat(t.q7_2) || 3)) / 2;
+      motDocs += ((parseFloat(t.q3_3) || 3) + (parseFloat(t.q3_4) || 3)) / 2;
+      desDocs += ((parseFloat(t.q3_5) || 3) + (parseFloat(t.q3_6) || 3)) / 2;
+      peerDocs += ((parseFloat(t.q3_7) || 3) + (parseFloat(t.q3_8) || 3)) / 2;
+      chgDocs += ((parseFloat(t.q3_9) || 3) + (parseFloat(t.q3_10) || 3)) / 2;
 
       if (t.q1_2) careers[t.q1_2] = (careers[t.q1_2] || 0) + 1;
     });
 
     const dimensions = [
-      { name: "업무관련", score: Number((relDocs / total).toFixed(2)) },
-      { name: "사용도율", score: Number((useDocs / total).toFixed(2)) },
-      { name: "실용적용", score: Number((pracDocs / total).toFixed(2)) },
-      { name: "역량성장", score: Number((skillDocs / total).toFixed(2)) },
-      { name: "성과기여", score: Number((orgDocs / total).toFixed(2)) },
-      { name: "자기효능", score: Number((effDocs / total).toFixed(2)) },
-      { name: "적용동기", score: Number((motDocs / total).toFixed(2)) },
+      { name: "업무 관련성", score: Number((relDocs / total).toFixed(2)) },
+      { name: "업무 유용성", score: Number((useDocs / total).toFixed(2)) },
+      { name: "실용 적용성", score: Number((pracDocs / total).toFixed(2)) },
+      { name: "업무 향상도", score: Number((skillDocs / total).toFixed(2)) },
+      { name: "성과 기여도", score: Number((orgDocs / total).toFixed(2)) },
+      { name: "자기효능감", score: Number((effDocs / total).toFixed(2)) },
+      { name: "전이동기", score: Number((motDocs / total).toFixed(2)) },
       { name: "전이설계", score: Number((desDocs / total).toFixed(2)) },
-      { name: "상사/동료", score: Number((peerDocs / total).toFixed(2)) },
-      { name: "행동변화", score: Number((chgDocs / total).toFixed(2)) }
+      { name: "상사 및 동료 지원", score: Number((peerDocs / total).toFixed(2)) },
+      { name: "변화가능성", score: Number((chgDocs / total).toFixed(2)) }
     ];
 
     const careerData = Object.keys(careers).map(name => ({ name, value: careers[name] }));
@@ -1632,22 +1658,21 @@ export default function AdminApp() {
       careerData,
       traineeTaskData: aggregateField(fieldTrainees, 'q1_1'),
       traineeCareerData: aggregateField(fieldTrainees, 'q1_2'),
-      traineeEmplData: aggregateField(fieldTrainees, 'q1_3'),
+      traineeScore21: aggregateField(fieldTrainees, 'q2_1'),
       traineeScore22: aggregateField(fieldTrainees, 'q2_2'),
       traineeScore23: aggregateField(fieldTrainees, 'q2_3'),
       traineeScore24: aggregateField(fieldTrainees, 'q2_4'),
       traineeScore25: aggregateField(fieldTrainees, 'q2_5'),
-      traineeScore26: aggregateField(fieldTrainees, 'q2_6'),
       traineeScore31: aggregateField(fieldTrainees, 'q3_1'),
       traineeScore32: aggregateField(fieldTrainees, 'q3_2'),
-      traineeScore41: aggregateField(fieldTrainees, 'q4_1'),
-      traineeScore42: aggregateField(fieldTrainees, 'q4_2'),
-      traineeScore51: aggregateField(fieldTrainees, 'q5_1'),
-      traineeScore52: aggregateField(fieldTrainees, 'q5_2'),
-      traineeScore61: aggregateField(fieldTrainees, 'q6_1'),
-      traineeScore62: aggregateField(fieldTrainees, 'q6_2'),
-      traineeScore71: aggregateField(fieldTrainees, 'q7_1'),
-      traineeScore72: aggregateField(fieldTrainees, 'q7_2')
+      traineeScore33: aggregateField(fieldTrainees, 'q3_3'),
+      traineeScore34: aggregateField(fieldTrainees, 'q3_4'),
+      traineeScore35: aggregateField(fieldTrainees, 'q3_5'),
+      traineeScore36: aggregateField(fieldTrainees, 'q3_6'),
+      traineeScore37: aggregateField(fieldTrainees, 'q3_7'),
+      traineeScore38: aggregateField(fieldTrainees, 'q3_8'),
+      traineeScore39: aggregateField(fieldTrainees, 'q3_9'),
+      traineeScore310: aggregateField(fieldTrainees, 'q3_10')
     };
   };
 
@@ -1671,18 +1696,21 @@ export default function AdminApp() {
     let sumTarget = 0;
 
     fgis.forEach(f => {
-      if (f.q2_1) targets[f.q2_1] = (targets[f.q2_1] || 0) + 1;
+      if (f.q2_1) {
+        const cleaned = f.q2_1.replace(/\([^)]*\)/g, '').trim();
+        targets[cleaned] = (targets[cleaned] || 0) + 1;
+      }
       if (f.companyAddressCity) regions[f.companyAddressCity] = (regions[f.companyAddressCity] || 0) + 1;
       sumSat += parseFloat(f.q4_1) || 3;
 
       // Map competency level string values to score equivalents
       const getNum = (s: string) => {
         if (!s) return 3;
-        if (s.includes('①')) return 1;
-        if (s.includes('②')) return 2;
-        if (s.includes('③')) return 3;
-        if (s.includes('④')) return 4;
-        if (s.includes('⑤')) return 5;
+        if (s.includes('①') || s.includes('기초 이해')) return 1;
+        if (s.includes('②') || s.includes('기본 실무')) return 2;
+        if (s.includes('③') || s.includes('독립 업무')) return 3;
+        if (s.includes('④') || s.includes('문제 해결')) return 4;
+        if (s.includes('⑤') || s.includes('지도 수준')) return 5;
         return 3;
       };
 
@@ -2452,14 +2480,29 @@ export default function AdminApp() {
 
                       {/* Expanded Questions Grid */}
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                        <DetailedChartCard title="1-2. 소속 기업의 주요 업종" data={corpStats.corpIndustryData} questionCode="q1_2" color="#3b82f6" />
-                        <DetailedChartCard title="1-3. 소속 기업의 상시근로자 수 (규모)" data={corpStats.corpEmplData} questionCode="q1_3" color="#10b981" />
-                        <DetailedChartCard title="1-4. 현업 복귀 후 수료생에 대한 부서장의 실무 행동 관찰 주기" data={corpStats.corpObserveData} questionCode="q1_4" color="#6366f1" />
-                        <DetailedChartCard title="2-2. 훈련 전에 부서장이 기대했던 훈련 참여 목적" data={corpStats.corpPurposeData} questionCode="q2_2" color="#f59e0b" />
-                        <DetailedChartCard title="2-3. 이수한 교육훈련 내용의 실제 업무상 중요도" data={corpStats.corpNecessityData} questionCode="q2_3" color="#ec4899" />
-                        <DetailedChartCard title="2-4. 수료생의 안정적인 현업 전이를 위한 사내 지원 및 격려 수준" data={corpStats.corpSupportData} questionCode="q2_4" color="#8b5cf6" />
-                        <DetailedChartCard title="2-5. 복귀 수료생을 위해 사내에서 제공하는 구체적 전이 촉진 방안" data={corpStats.corpSupportTypeData} questionCode="q2_5" color="#06b6d4" />
-                        <DetailedChartCard title="2-6. 향후 타 직원/동료에게 본 컨소시엄 기술 과정 참여를 추천할 의향" data={corpStats.corpExpansionData} questionCode="q2_6" color="#ef4444" />
+                        <DetailedChartCard title="1-2. 귀사의 주요 업종 또는 사업 분야는 무엇입니까?" data={corpStats.corpIndustryData} questionCode="q1_2" color="#3b82f6" />
+                        <DetailedChartCard title="1-3. 귀사의 사업장 상시 근로자 수는 다음 중 어느 구간에 해당합니까?" data={corpStats.corpEmplData} questionCode="q1_3" color="#10b981" />
+                        <DetailedChartCard title="1-4. 귀하는 훈련 참여 근로자의 업무 변화를 어느 정도 관리/관찰할 수 있습니까?" data={corpStats.corpObserveData} questionCode="q1_4" color="#6366f1" />
+                        
+                        <DetailedChartCard title="2-1. 수료 직원이 학습내용을 업무에 활용할 수 있도록 지원하였습니까?" data={corpStats.corpQ2_1} questionCode="q2_1" color="#f59e0b" />
+                        <DetailedChartCard title="2-2. 귀사가 제공한 지원 방식은 무엇입니까?" data={corpStats.corpQ2_2} questionCode="q2_2" color="#ec4899" />
+                        <DetailedChartCard title="2-3. 향후 훈련 참여 기회를 확대할 의향이 있습니까?" data={corpStats.corpQ2_3} questionCode="q2_3" color="#8b5cf6" />
+                      </div>
+
+                      {/* Subjective Submissions */}
+                      <div className="mt-8 mb-6 border-t border-slate-100 pt-8" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+                        <div className="flex items-center gap-2 text-indigo-900 mb-6">
+                          <MessageSquare className="text-indigo-600" size={18} />
+                          <h4 className="text-sm font-bold tracking-tight">주관식 서술 종합 요약</h4>
+                        </div>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                          <OtherOpinionsCard title="1-1. 직위 기타의견" data={corpStats.qaGroups['1-1. 직위 기타의견']} isExporting={isExporting} questionCode="q1_1" />
+                          <OtherOpinionsCard title="1-2. 사업분야 기타의견" data={corpStats.qaGroups['1-2. 사업분야 기타의견']} isExporting={isExporting} questionCode="q1_2" />
+                          <OtherOpinionsCard title="2-2. 지원방식 기타의견" data={corpStats.qaGroups['2-2. 지원방식 기타의견']} isExporting={isExporting} questionCode="q2_2" />
+                          <OtherOpinionsCard title="2-4. 후속지원 필요사항" data={corpStats.qaGroups['2-4. 후속지원 필요사항']} isExporting={isExporting} questionCode="q2_4" />
+                          <OtherOpinionsCard title="3-6. 업무개선 사례" data={corpStats.qaGroups['3-6. 업무개선 사례']} isExporting={isExporting} questionCode="q3_6" />
+                          <OtherOpinionsCard title="3-7. 보완/개선 사항" data={corpStats.qaGroups['3-7. 보완/개선 사항']} isExporting={isExporting} questionCode="q3_7" />
+                        </div>
                       </div>
                     </div>
 
@@ -2509,19 +2552,19 @@ export default function AdminApp() {
                 {/* Stats cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5" style={isExporting ? { pageBreakInside: 'avoid', marginBottom: '16px' } : undefined}>
                   <div className="bg-emerald-50/50 border border-emerald-100 p-5 rounded-xl text-left">
-                    <span className="text-xs text-emerald-850 font-bold block font-semibold">동기수련생 응답수</span>
+                    <span className="text-xs text-emerald-850 font-bold block font-semibold">응답 수</span>
                     <span className="text-2xl font-black text-gray-900 mt-1 block">{fieldTrainees.length} <sub className="text-xs font-medium text-gray-500">명 수료생</sub></span>
                   </div>
                   <div className="bg-emerald-50/50 border border-emerald-100 p-5 rounded-xl text-left">
-                    <span className="text-xs text-emerald-800 font-bold block font-semibold">평균 자기효능감 지표</span>
+                    <span className="text-xs text-emerald-800 font-bold block font-semibold">자기효능감 평균 점수</span>
                     <span className="text-2xl font-black text-gray-900 mt-1 block">
                       {(fieldTrainees.reduce((acc, curr) => acc + ((parseFloat(curr.q3_1 || 3) + parseFloat(curr.q3_2 || 3)) / 2), 0) / (fieldTrainees.length || 1)).toFixed(2)} <sub className="text-xs font-medium text-gray-500">/ 5.0 점</sub>
                     </span>
                   </div>
                   <div className="bg-emerald-50/50 border border-emerald-100 p-5 rounded-xl text-left">
-                    <span className="text-xs text-emerald-800 font-semibold block font-semibold">주변 부서장 동료 적극 장려도</span>
+                    <span className="text-xs text-emerald-800 font-semibold block font-semibold">상사 및 동료 지원 평균 점수</span>
                     <span className="text-2xl font-black text-gray-900 mt-1 block">
-                      {(fieldTrainees.reduce((acc, curr) => acc + ((parseFloat(curr.q6_1 || 3) + parseFloat(curr.q6_2 || 3)) / 2), 0) / (fieldTrainees.length || 1)).toFixed(2)} <sub className="text-xs font-medium text-gray-500">/ 5.0 점</sub>
+                      {(fieldTrainees.reduce((acc, curr) => acc + ((parseFloat(curr.q3_7 || 3) + parseFloat(curr.q3_8 || 3)) / 2), 0) / (fieldTrainees.length || 1)).toFixed(2)} <sub className="text-xs font-medium text-gray-500">/ 5.0 점</sub>
                     </span>
                   </div>
                 </div>
@@ -2530,33 +2573,33 @@ export default function AdminApp() {
                 {fieldTrainees.length > 0 && (
                   <div className="bg-slate-900 text-white rounded-2xl p-6 border border-emerald-500/30 text-left shadow-lg space-y-4" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
                     <div className="flex items-center gap-2">
-                       <h3 className="text-sm font-black text-emerald-400">🎓 훈련 성과 수료생 현업전이 종합 분석 결과 및 시사점</h3>
+                       <h3 className="text-sm font-black text-emerald-400">🎓 현업적용도(훈련생) 핵심 분석 결과 및 시사점</h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-300">
                       <div className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50 space-y-2">
-                        <span className="text-slate-400 font-bold block">• 최고/최하 성과 학습 요인</span>
+                        <span className="text-slate-400 font-bold block">• 핵심 성과 지표 비교</span>
                         <div className="text-sm font-bold text-white leading-relaxed">
                           {topTraineeMetric ? (
-                            <span className="block">최우수 차원: <b className="text-[#34d399]">&quot;{topTraineeMetric.name}&quot;</b> ({topTraineeMetric.score}점)</span>
+                            <span className="block">가장 우수한 지표: <b className="text-[#34d399]">{topTraineeMetric.name}</b> ({topTraineeMetric.score}점)</span>
                           ) : null}
                           {bottomTraineeMetric ? (
-                            <span className="block mt-0.5">최저 차원: <b className="text-[#f43f5e]">&quot;{bottomTraineeMetric.name}&quot;</b> ({bottomTraineeMetric.score}점)</span>
+                            <span className="block mt-0.5">상대적 미흡 지표: <b className="text-[#f43f5e]">{bottomTraineeMetric.name}</b> ({bottomTraineeMetric.score}점)</span>
                           ) : null}
                         </div>
                       </div>
                       <div className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50 space-y-2">
-                        <span className="text-slate-400 font-bold block">• 전공 경력 분포 경향</span>
+                        <span className="text-slate-400 font-bold block">• 가장 많은 응답자 경력 분포</span>
                         <div className="text-sm font-bold text-slate-200 leading-relaxed">
                           {topTraineeCareer ? (
-                            <span>주 전공직무: <b className="text-teal-300">&quot;{topTraineeCareer.name}&quot;</b> ({topTraineeCareer.value}명, {((topTraineeCareer.value/fieldTrainees.length)*100).toFixed(1)}%)</span>
+                            <span>최다 경력: <b className="text-teal-300">{topTraineeCareer.name}</b> ({topTraineeCareer.value}명, {((topTraineeCareer.value/fieldTrainees.length)*100).toFixed(1)}%)</span>
                           ) : null}
                         </div>
                       </div>
                       <div className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50 space-y-1">
-                        <span className="text-slate-400 font-bold block">• 학습자 요인 시사총평</span>
+                        <span className="text-slate-400 font-bold block">• 개선 제안</span>
                         <p className="text-[11px] text-slate-300 leading-relaxed">
-                          10대 전이 지표 중 <b className="text-emerald-300">&quot;{topTraineeMetric?.name}&quot;</b>이 우수한 것은 높은 몰입 효과를 반증합니다. 
-                          상대적으로 미흡한 <b className="text-rose-300">&quot;{bottomTraineeMetric?.name}&quot;</b>을 진작하기 위해, 맞춤형 멘토제 및 동료 커뮤니티 장려책 마련이 필요합니다.
+                          해당 과정은 <b className="text-[#34d399]">[{topTraineeMetric?.name}]</b>에서 강점을 보이고 있어 활용을 장려해야 합니다. 
+                          반면, <b className="text-[#f43f5e]">[{bottomTraineeMetric?.name}]</b> 지표가 낮게 나타났으므로, 이를 보완할 수 있는 조직 내 지원책이나 교육 방식의 개선이 필요합니다.
                         </p>
                       </div>
                     </div>
@@ -2570,10 +2613,17 @@ export default function AdminApp() {
                     <div className={isExporting ? "grid grid-cols-1 gap-8" : "grid grid-cols-1 lg:grid-cols-2 gap-8"}>
                       {/* Bar chart representing trainee dimensions */}
                       <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl col-span-1 lg:col-span-2 text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
-                        <h4 className="text-xs font-bold text-slate-800 mb-4 tracking-wider flex items-center gap-1">
-                          <TrendingUp size={16} className="text-[#2B5C43]" />
-                          <span>훈련생 자조 실전 학습 전이도 10대 지표 상세 종합 (수치 표시)</span>
-                        </h4>
+                        <div className="flex justify-between items-start mb-4">
+                          <h4 className="text-xs font-bold text-slate-800 tracking-wider flex items-center gap-1">
+                            <TrendingUp size={16} className="text-[#2B5C43]" />
+                            <span>현업적용도 핵심 지표 상세 분석</span>
+                          </h4>
+                          {!isExporting && (
+                            <div className="text-[10px] bg-white border border-gray-200 px-2 py-1 rounded text-gray-500 font-medium">
+                              [평균점수 해석] 4.5 이상: 매우 우수 / 3.5~4.4: 우수 / 2.5~3.4: 보통 / 1.5~2.4: 미흡 / 1.5 미만: 매우 미흡
+                            </div>
+                          )}
+                        </div>
                         <div className={isExporting ? "h-[320px] flex justify-center w-full overflow-hidden" : "h-80"}>
                           {isExporting ? (
                             <BarChart data={traineeStats.dimensions} width={580} height={300}>
@@ -2610,7 +2660,7 @@ export default function AdminApp() {
                         <div className="mt-4 bg-white border border-gray-100 rounded-xl p-4 text-left">
                           <h5 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-1">
                             <span className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span>
-                            <span>수료생 전이 자조 10대 성과지표 정밀 성적표</span>
+                            <span>핵심 성과 지표 종합표</span>
                           </h5>
                           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 text-xs">
                             {sortedTraineeDimensions.map((d, idx) => (
@@ -2626,16 +2676,17 @@ export default function AdminApp() {
 
                     <div className={isExporting ? "grid grid-cols-1 gap-8" : "grid grid-cols-1 lg:grid-cols-2 gap-8"}>
                       {/* Trainee careers */}
-                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl flex flex-col justify-between text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
-                        <h4 className="text-xs font-bold text-slate-800 mb-2 tracking-wider">응답 훈련생의 전공 경력 백분율 (수치 표시)</h4>
-                        <div className={isExporting ? "h-[250px] flex justify-center w-full overflow-hidden" : "h-60 flex items-center justify-center"}>
+                      <div className={`bg-slate-50 border border-gray-150 p-5 rounded-2xl flex flex-col justify-between text-left ${isExporting ? 'h-auto' : 'h-[380px]'}`} style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+                        <h4 className="text-xs font-bold text-slate-800 mb-2 tracking-wider">응답자 경력 분포</h4>
+                        <div className={isExporting ? "h-[300px] flex justify-center w-full overflow-hidden" : "h-[320px] w-full flex items-center justify-center"}>
                           {isExporting ? (
-                            <PieChart width={580} height={240}>
+                            <PieChart width={580} height={280} margin={{ top: 20, right: 30, bottom: 20, left: 30 }}>
                               <Pie
                                 data={traineeStats.careerData}
                                 cx="50%" cy="50%"
-                                outerRadius={72}
+                                outerRadius={80}
                                 dataKey="value"
+                                labelLine={true}
                                 label={({ name, value, percent }) => `${name} (${value}명, ${(percent * 100).toFixed(0)}%)`}
                                 style={{ fontSize: '10px', fontWeight: 'bold', fill: '#0f172a' }}
                               >
@@ -2647,14 +2698,15 @@ export default function AdminApp() {
                             </PieChart>
                           ) : (
                             <ResponsiveContainer width="100%" height="100%">
-                              <PieChart>
+                              <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                                 <Pie
                                   data={traineeStats.careerData}
                                   cx="50%" cy="50%"
-                                  outerRadius={80}
+                                  outerRadius="50%"
                                   dataKey="value"
+                                  labelLine={true}
                                   label={({ name, value, percent }) => `${name} (${value}명, ${(percent * 100).toFixed(0)}%)`}
-                                  style={{ fontSize: '11px', fontWeight: 'bold' }}
+                                  style={{ fontSize: '10px', fontWeight: 'bold' }}
                                 >
                                   {traineeStats.careerData.map((e, i) => (
                                     <Cell key={`cell-${i}`} fill={COLORS[(i + 3) % COLORS.length]} />
@@ -2670,7 +2722,7 @@ export default function AdminApp() {
                         <div className="mt-4 bg-white border border-gray-100 rounded-xl p-4 text-left">
                           <h5 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-1">
                             <span className="w-1.5 h-1.5 bg-sky-600 rounded-full"></span>
-                            <span>응답 수료 수험생 주 전공분야 분포 실효 수치표</span>
+                            <span>경력 분포표</span>
                           </h5>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
                             {sortedTraineeCareer.map((e, idx) => (
@@ -2684,13 +2736,13 @@ export default function AdminApp() {
                       </div>
 
                       {/* Summary list */}
-                      <div className={`bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left ${isExporting ? 'overflow-visible h-auto' : 'overflow-y-auto max-h-[260px] pr-2'}`} style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
-                        <h4 className="text-xs font-bold text-slate-800 mb-3 tracking-wider">주관식 현장 도움 성취 사례 종합 (원문 대장)</h4>
-                        <div className="divide-y divide-gray-150 text-xs text-left">
-                          {fieldTrainees.filter(t => t.q8).map((t, idx) => (
+                      <div className={`bg-slate-50 border border-gray-150 p-5 rounded-2xl flex flex-col text-left ${isExporting ? 'h-auto' : 'h-[380px]'}`} style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+                        <h4 className="text-xs font-bold text-slate-800 mb-3 tracking-wider shrink-0">주관식 의견 종합</h4>
+                        <div className={`divide-y divide-gray-150 text-xs text-left flex-1 ${isExporting ? '' : 'overflow-y-auto pr-2 custom-scrollbar min-h-0'}`}>
+                          {fieldTrainees.filter(t => t.q4).map((t, idx) => (
                             <div key={idx} className="py-2.5">
-                              <span className="font-bold text-emerald-800">훈련생 사례 {idx + 1} ({t.q1_1 || '전공'} / {t.name || '훈련생'}):</span>
-                              <p className="text-gray-600 font-light mt-0.5 leading-relaxed">&quot;{t.q8}&quot;</p>
+                              <span className="font-bold text-emerald-800">훈련생 사례 {idx + 1} ({t.q1_1_final || t.q1_1 || '전공'}):</span>
+                              <p className="text-gray-600 font-light mt-0.5 leading-relaxed">&quot;{t.q4}&quot;</p>
                             </div>
                           ))}
                         </div>
@@ -2706,34 +2758,34 @@ export default function AdminApp() {
                             <span className="w-2.5 h-2.5 bg-emerald-600 rounded-full animate-ping" />
                             <span>📊 현업적용도(훈련생) 설문문항 분석</span>
                           </h3>
-                          <p className="text-[10px] text-gray-400 mt-1">훈련생 자가보고 설문의 주요 영역별 척도 및 응답 분포 통계를 제공합니다.</p>
                         </div>
                       </div>
 
                       {/* Expanded Questions Grid */}
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                        <DetailedChartCard title="1-1. 주 실무 담당 분야" data={traineeStats.traineeTaskData} questionCode="q1_1" color="#3b82f6" />
-                        <DetailedChartCard title="1-2. 실무 유관 분야 총 경력 연차" data={traineeStats.traineeCareerData} questionCode="q1_2" color="#10b981" />
-                        <DetailedChartCard title="1-3. 소속 기업의 상시근로자 수 (규모)" data={traineeStats.traineeEmplData} questionCode="q1_3" color="#6366f1" />
+                        <DetailedChartCard title="1-1. 주 담당 업무" data={traineeStats.traineeTaskData} questionCode="q1_1" color="#3b82f6" />
+                        <DetailedChartCard title="1-2. 관련 업무 경력" data={traineeStats.traineeCareerData} questionCode="q1_2" color="#10b981" />
                         
-                        {/* 5대 적용도 분포 개별 시각화 */}
-                        <DetailedChartCard title="2-2. [경업적용] 이수한 훈련과정과 현재 실무와의 연관성" data={traineeStats.traineeScore22} questionCode="q2_2" color="#f59e0b" />
-                        <DetailedChartCard title="2-3. [업무유용] 교육훈련 이수 후의 실제 업무 유용성" data={traineeStats.traineeScore23} questionCode="q2_3" color="#ec4899" />
-                        <DetailedChartCard title="2-4. [실용적용] 사내 전력설비 현업 업무에서의 실 적용감" data={traineeStats.traineeScore24} questionCode="q2_4" color="#8b5cf6" />
-                        <DetailedChartCard title="2-5. [역량성장] 과정 수료 후 본인의 기술 역량 성장도" data={traineeStats.traineeScore25} questionCode="q2_5" color="#06b6d4" />
-                        <DetailedChartCard title="2-6. [성과기여] 조직 내 고장률 감소 및 예방적 성과 기여" data={traineeStats.traineeScore26} questionCode="q2_6" color="#ef4444" />
+                        <DetailedChartCard title="2-1. [업무관련성] 학습한 내용은 실제 업무와 관련이 높다" data={traineeStats.traineeScore21} questionCode="q2_1" color="#f59e0b" />
+                        <DetailedChartCard title="2-2. [업무유용성] 학습한 내용은 업무 적용에 도움이 되었다" data={traineeStats.traineeScore22} questionCode="q2_2" color="#ec4899" />
+                        <DetailedChartCard title="2-3. [실용적용성] 학습내용을 업무에 지속적으로 적용하고자 노력하고 있다" data={traineeStats.traineeScore23} questionCode="q2_3" color="#8b5cf6" />
+                        <DetailedChartCard title="2-4. [업무향상도] 훈련 이후 업무를 더 효과적이고 체계적으로 수행하게 되었다" data={traineeStats.traineeScore24} questionCode="q2_4" color="#06b6d4" />
+                        <DetailedChartCard title="2-5. [성과기여도] 학습한 내용은 업무성과 향상에 도움이 되었다" data={traineeStats.traineeScore25} questionCode="q2_5" color="#ef4444" />
                         
-                        {/* 훈련 전이 환경/동기 문항 개별 시각화 */}
-                        <DetailedChartCard title="3-1. [자기효능] 습득 기술을 단독으로 실제 활용할 수 있는 자신감" data={traineeStats.traineeScore31} questionCode="q3_1" color="#22c55e" />
-                        <DetailedChartCard title="3-2. [자기효능] 다양한 기기 고장 등 환경 변화에 대한 해결 대처력" data={traineeStats.traineeScore32} questionCode="q3_2" color="#f43f5e" />
-                        <DetailedChartCard title="4-1. [적용동기] 습득한 실무 기술을 실물 행동으로 빠르게 적용할 의지" data={traineeStats.traineeScore41} questionCode="q4_1" color="#a855f7" />
-                        <DetailedChartCard title="4-2. [적용동기] 훈련 성과 이전 시 사내의 격려 및 체계적 피드백 수준" data={traineeStats.traineeScore42} questionCode="q4_2" color="#14b8a6" />
-                        <DetailedChartCard title="5-1. [전이설계] 교육 과정 내 구성요소(예제, 도구)의 실무 유사성" data={traineeStats.traineeScore51} questionCode="q5_1" color="#6b7280" />
-                        <DetailedChartCard title="5-2. [전이설계] 수강 중 제공된 매뉴얼, 가이드의 현장 활용 실효성" data={traineeStats.traineeScore52} questionCode="q5_2" color="#3b82f6" />
-                        <DetailedChartCard title="6-1. [상사동료] 사내 동료 및 상관에 대한 동일 기술 과정 추천도" data={traineeStats.traineeScore61} questionCode="q6_1" color="#10b981" />
-                        <DetailedChartCard title="6-2. [상사동료] 현장 적용 시 주변 동료들의 업무 배려 수준" data={traineeStats.traineeScore62} questionCode="q6_2" color="#6366f1" />
-                        <DetailedChartCard title="7-1. [행동변화] 이수 후 스스로 진행하는 주도적 점검 습관화" data={traineeStats.traineeScore71} questionCode="q7_1" color="#f59e0b" />
-                        <DetailedChartCard title="7-2. [행동변화] 사내 기술 매뉴얼의 보안 및 실무 공정 개선 시도 성취" data={traineeStats.traineeScore72} questionCode="q7_2" color="#ec4899" />
+                        <DetailedChartCard title="3-1. [자기효능감] 업무에 새로운 지식과 기술을 적용할 수 있다" data={traineeStats.traineeScore31} questionCode="q3_1" color="#22c55e" />
+                        <DetailedChartCard title="3-2. [자기효능감] 어려운 상황에서도 배운 내용을 업무에 활용할 수 있다" data={traineeStats.traineeScore32} questionCode="q3_2" color="#f43f5e" />
+                        
+                        <DetailedChartCard title="3-3. [전이동기] 배운 지식과 기술이 업무성과 향상에 도움이 된다" data={traineeStats.traineeScore33} questionCode="q3_3" color="#a855f7" />
+                        <DetailedChartCard title="3-4. [전이동기] 업무 관련 문제를 해결하는 데 도움이 된다고 생각한다" data={traineeStats.traineeScore34} questionCode="q3_4" color="#14b8a6" />
+                        
+                        <DetailedChartCard title="3-5. [전이설계] 훈련과정은 업무 적용 방법을 구체적으로 안내하였다" data={traineeStats.traineeScore35} questionCode="q3_5" color="#6b7280" />
+                        <DetailedChartCard title="3-6. [전이설계] 과정은 직무 활용 사례와 실무 중심으로 구성되었다" data={traineeStats.traineeScore36} questionCode="q3_6" color="#3b82f6" />
+                        
+                        <DetailedChartCard title="3-7. [상사/동료지원] 상사는 학습 내용을 업무에 활용하도록 지원한다" data={traineeStats.traineeScore37} questionCode="q3_7" color="#10b981" />
+                        <DetailedChartCard title="3-8. [상사/동료지원] 동료는 학습 내용을 업무에 적용하도록 지원한다" data={traineeStats.traineeScore38} questionCode="q3_8" color="#6366f1" />
+                        
+                        <DetailedChartCard title="3-9. [변화가능성] 우리 부서는 학습 내용을 업무에 적용하려는 분위기가 있다" data={traineeStats.traineeScore39} questionCode="q3_9" color="#f59e0b" />
+                        <DetailedChartCard title="3-10. [변화가능성] 우리 부서는 새로운 업무 방식 시도에 긍정적이다" data={traineeStats.traineeScore310} questionCode="q3_10" color="#ec4899" />
                       </div>
                     </div>
 
@@ -2745,7 +2797,7 @@ export default function AdminApp() {
                           <h4 className="text-xs font-bold tracking-tight">훈련생 주관식도 직접 종합 요약 (AI 텍스트 마이닝)</h4>
                         </div>
                         {(() => {
-                          const comments = fieldTrainees.map(t => t.q8).filter(Boolean);
+                          const comments = fieldTrainees.map(t => t.q4).filter(Boolean);
                           const analysis = summarizeComments(comments);
                           return (
                             <div className="space-y-4 text-left">
@@ -2779,18 +2831,14 @@ export default function AdminApp() {
             {activeTab === 'fgi' && (
               <div className="space-y-8">
                 {/* Stats cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5" style={isExporting ? { pageBreakInside: 'avoid', marginBottom: '16px' } : undefined}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5" style={isExporting ? { pageBreakInside: 'avoid', marginBottom: '16px' } : undefined}>
                   <div className="bg-[#e0f2f1]/40 border border-[#0f766e]/30 p-5 rounded-xl text-left">
-                    <span className="text-xs text-neutral-600 font-bold block">FGI 심층 패널 수</span>
+                    <span className="text-xs text-neutral-600 font-bold block">FGI 응답 수</span>
                     <span className="text-2xl font-black text-gray-900 mt-1 block">{fgis.length} <sub className="text-xs font-medium text-gray-500">개 그룹</sub></span>
                   </div>
                   <div className="bg-[#e0f2f1]/40 border border-[#0f766e]/30 p-5 rounded-xl text-left">
-                    <span className="text-xs text-neutral-600 font-bold block">전반적 사업 만족 지표</span>
+                    <span className="text-xs text-neutral-600 font-bold block">컨소시엄 훈련 만족도 지표</span>
                     <span className="text-2xl font-black text-gray-900 mt-1 block">{fgiStats.avgSat || 0} <sub className="text-xs font-medium text-gray-500">/ 5.0 점</sub></span>
-                  </div>
-                  <div className="bg-[#e0f2f1]/40 border border-[#0f766e]/30 p-5 rounded-xl text-left">
-                    <span className="text-xs text-neutral-600 font-bold block">역량 갭 분석 표본수</span>
-                    <span className="text-2xl font-black text-gray-900 mt-1 block">{fgis.length} <sub className="text-xs font-medium text-gray-500">종합정렬</sub></span>
                   </div>
                 </div>
 
@@ -2798,27 +2846,28 @@ export default function AdminApp() {
                 {fgis.length > 0 && (
                   <div className="bg-slate-900 text-white rounded-2xl p-6 border border-emerald-500/30 text-left shadow-lg space-y-4" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
                     <div className="flex items-center gap-2">
-                       <h3 className="text-sm font-black text-emerald-400">💬 FGI(초점집단 공동면담) 심층 의견 및 요구사항 핵심 브리핑</h3>
+                       <h3 className="text-sm font-black text-emerald-400">💬 FGI(요구조사) 데이터 핵심 브리핑</h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs text-slate-300">
                       <div className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50 space-y-2">
-                        <span className="text-slate-400 font-bold block">• 역량 격차(GAP) 분석 수치</span>
+                        <span className="text-slate-400 font-bold block">• 요구 역량 대비 현재 수준</span>
                         <div className="text-sm font-bold text-white leading-relaxed space-y-1">
-                          <span className="block text-gray-400 text-xs">현재 자조 수준: <b className="text-white">{fgiTargetCurr}점</b></span>
+                          <span className="block text-gray-400 text-xs">현재 수준: <b className="text-white">{fgiTargetCurr}점</b></span>
                           <span className="block text-emerald-400 text-xs">요구 목표 수준: <b className="text-emerald-400">{fgiTargetGoal}점</b></span>
-                          <span className="block text-rose-400 text-xs">미달 격차(Gap): <b className="text-rose-400">{fgiTargetGap}점</b> 인지 발생</span>
+                          <span className="block text-rose-400 text-xs pb-1">격차(Gap): <b className="text-rose-400">{fgiTargetGap}점</b> 차이 발생</span>
+                          <span className="block text-[10px] text-slate-400 font-normal leading-snug pt-1.5 border-t border-slate-700/50">차이(Gap) 점수가 클수록 현장 실무에서 요구하는 역량과 실제 역량 간 불일치가 커, 우선적이고 집중적인 교육 훈련이 시급함을 의미합니다.</span>
                         </div>
                       </div>
                       <div className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50 space-y-2">
-                        <span className="text-slate-400 font-bold block">• 적극적 요구 훈련대상 연차</span>
+                        <span className="text-slate-400 font-bold block">• 훈련이 시급한 연차</span>
                         <div className="text-sm font-bold text-slate-200 leading-relaxed">
                           {topFgiTarget ? (
-                            <span>최시급 대상: <b className="text-teal-300">&quot;{topFgiTarget.name}&quot;</b> ({topFgiTarget.value}표, {((topFgiTarget.value / fgis.length) * 100).toFixed(1)}%)</span>
+                            <span>최우선 대상: <b className="text-teal-300">&quot;{topFgiTarget.name}&quot;</b> ({topFgiTarget.value}표, {((topFgiTarget.value / fgis.length) * 100).toFixed(1)}%)</span>
                           ) : null}
                         </div>
                       </div>
                       <div className="bg-slate-800/60 p-4 rounded-xl border border-slate-700/50 space-y-1">
-                        <span className="text-slate-400 font-bold block">• 심층 FGI 면담자 정책 제안</span>
+                        <span className="text-slate-400 font-bold block">• FGI 면담자의 제안 핵심 요약</span>
                         <p className="text-[11px] text-slate-300 leading-relaxed">
                           패널들의 전반 만족도는  <b className="text-white">{fgiStats.avgSat}점 / 5.0점</b>으로 상당히 높으며 실무적 갈증이 상존합니다. 
                           요구 수준과 현재 격차인 <b className="text-rose-300">{fgiTargetGap}점</b>을 조속히 메우기 위해 <b className="text-[#34d399]">{topFgiTarget?.name || '시급대상연차'}</b>에 집중 조준하여 맞춤 특화 단기 심화과정 특수 증설이 강력히 제안됩니다.
@@ -2833,21 +2882,21 @@ export default function AdminApp() {
                 ) : (
                   <div className="space-y-8">
                     {/* Contrast Level graph */}
-                    <div className={isExporting ? "grid grid-cols-1 gap-8" : "grid grid-cols-1 lg:grid-cols-3 gap-8"}>
-                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
-                        <h4 className="text-xs font-bold text-slate-800 mb-4 tracking-wider">주 목적 대상 대비 현재 vs 요구 목표 역량수치 분석 (수치 표시)</h4>
-                        <div className={isExporting ? "h-[300px] flex justify-center w-full overflow-hidden" : "h-72"}>
+                    <div className={isExporting ? "grid grid-cols-1 gap-8" : "grid grid-cols-1 lg:grid-cols-2 gap-8"}>
+                      <div className="lg:col-span-2 bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+                        <h4 className="text-sm font-bold text-slate-800 mb-4 tracking-wider">요구 역량과 현재 역량 비교 분석</h4>
+                        <div className={isExporting ? "h-[300px] flex justify-center w-full overflow-hidden" : "h-80"}>
                           {isExporting ? (
-                            <BarChart data={fgiStats.contrastData} width={580} height={280}>
+                            <BarChart data={fgiStats.contrastData} width={1000} height={280}>
                               <CartesianGrid strokeDasharray="3 3" />
-                              <XAxis dataKey="category" style={{ fontSize: '11px', fontWeight: 'bold' }} />
+                              <XAxis dataKey="category" style={{ fontSize: '12px', fontWeight: 'bold' }} />
                               <YAxis domain={[1, 5]} />
                               <Tooltip />
                               <Legend />
-                              <Bar dataKey="현재역량" fill="#2563EB" radius={[4, 4, 0, 0]}>
+                              <Bar dataKey="현재역량" fill="#2563EB" radius={[4, 4, 0, 0]} maxBarSize={60}>
                                 <LabelList dataKey="현재역량" position="top" style={{ fontSize: '11px', fontWeight: 'bold', fill: '#1e3a8a' }} />
                               </Bar>
-                              <Bar dataKey="목표역량" fill="#EA580C" radius={[4, 4, 0, 0]}>
+                              <Bar dataKey="목표역량" fill="#EA580C" radius={[4, 4, 0, 0]} maxBarSize={60}>
                                 <LabelList dataKey="목표역량" position="top" style={{ fontSize: '11px', fontWeight: 'bold', fill: '#7c2d12' }} />
                               </Bar>
                             </BarChart>
@@ -2855,15 +2904,15 @@ export default function AdminApp() {
                             <ResponsiveContainer width="100%" height="100%">
                               <BarChart data={fgiStats.contrastData}>
                                 <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="category" style={{ fontSize: '11px', fontWeight: 'bold' }} />
+                                <XAxis dataKey="category" style={{ fontSize: '12px', fontWeight: 'bold' }} />
                                 <YAxis domain={[1, 5]} />
                                 <Tooltip />
                                 <Legend />
-                                <Bar dataKey="현재역량" fill="#2563EB" radius={[4, 4, 0, 0]}>
-                                  <LabelList dataKey="현재역량" position="top" style={{ fontSize: '11px', fontWeight: 'bold', fill: '#1e3a8a' }} />
+                                <Bar dataKey="현재역량" fill="#2563EB" radius={[4, 4, 0, 0]} maxBarSize={60}>
+                                  <LabelList dataKey="현재역량" position="top" style={{ fontSize: '12px', fontWeight: 'bold', fill: '#1e3a8a' }} />
                                 </Bar>
-                                <Bar dataKey="목표역량" fill="#EA580C" radius={[4, 4, 0, 0]}>
-                                  <LabelList dataKey="목표역량" position="top" style={{ fontSize: '11px', fontWeight: 'bold', fill: '#7c2d12' }} />
+                                <Bar dataKey="목표역량" fill="#EA580C" radius={[4, 4, 0, 0]} maxBarSize={60}>
+                                  <LabelList dataKey="목표역량" position="top" style={{ fontSize: '12px', fontWeight: 'bold', fill: '#7c2d12' }} />
                                 </Bar>
                               </BarChart>
                             </ResponsiveContainer>
@@ -2871,38 +2920,38 @@ export default function AdminApp() {
                         </div>
 
                         {/* 역량 GAP 상세 성과 수치표 */}
-                        <div className="mt-4 bg-white border border-gray-100 rounded-xl p-4 text-left">
-                          <h5 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2 flex items-center gap-1">
+                        <div className="mt-4 bg-white border border-gray-100 rounded-xl p-4 text-left shadow-sm">
+                          <h5 className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-1">
                             <span className="w-1.5 h-1.5 bg-rose-600 rounded-full"></span>
-                            <span>FGI 패널 기술 역량 차이(GAP) 수치 비교표</span>
+                            <span>역량 차이 세부 비교표</span>
                           </h5>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
-                            <div className="bg-zinc-50 border border-zinc-100 rounded-lg p-2.5 flex justify-between">
-                              <span className="text-gray-500 font-bold">현재 실전 실무 기술 역량</span>
-                              <span className="font-semibold text-gray-800">{fgiTargetCurr} / 5.0 점</span>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-sm">
+                            <div className="bg-zinc-50 border border-zinc-100 rounded-lg p-3.5 flex justify-between items-center shadow-xs">
+                              <span className="text-gray-500 font-bold">현재 실전 역량</span>
+                              <span className="font-bold text-lg text-gray-800">{fgiTargetCurr} <span className="text-xs font-medium text-gray-500">/ 5.0</span></span>
                             </div>
-                            <div className="bg-emerald-50/40 border border-emerald-100 rounded-lg p-2.5 flex justify-between">
-                              <span className="text-emerald-700 font-bold">요구 필요 목표 역량</span>
-                              <span className="font-semibold text-emerald-800">{fgiTargetGoal} / 5.0 점</span>
+                            <div className="bg-emerald-50/70 border border-emerald-100 rounded-lg p-3.5 flex justify-between items-center shadow-xs">
+                              <span className="text-emerald-700 font-bold">목표 역량</span>
+                              <span className="font-bold text-lg text-emerald-800">{fgiTargetGoal} <span className="text-xs font-medium text-emerald-600">/ 5.0</span></span>
                             </div>
-                            <div className="bg-rose-50/40 border border-rose-100 rounded-lg p-2.5 flex justify-between">
-                              <span className="text-rose-700 font-bold">보완 지향 격차 지수(GAP)</span>
-                              <span className="font-semibold text-rose-800">{fgiTargetGap} 점</span>
+                            <div className="bg-rose-50/70 border border-rose-100 rounded-lg p-3.5 flex justify-between items-center shadow-xs">
+                              <span className="text-rose-700 font-bold">초과 격차(GAP)</span>
+                              <span className="font-bold text-lg text-rose-800">{fgiTargetGap} <span className="text-xs font-medium text-rose-600">점</span></span>
                             </div>
                           </div>
                         </div>
                       </div>
 
                       {/* Demand targets circle chart */}
-                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
-                        <h4 className="text-xs font-bold text-slate-800 mb-4 tracking-wider">훈련 수요 시급도가 높은 연차 분포 (수치 표시)</h4>
+                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left flex flex-col" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+                        <h4 className="text-sm font-bold text-slate-800 mb-4 tracking-wider">훈련이 시급한 연차 분포</h4>
                         <div className={isExporting ? "h-[250px] flex justify-center w-full overflow-hidden" : "h-64 flex items-center justify-center"}>
                           {isExporting ? (
-                            <PieChart width={580} height={240}>
+                            <PieChart width={500} height={240}>
                               <Pie
                                 data={fgiStats.demandTargets}
                                 cx="50%" cy="50%"
-                                outerRadius={72}
+                                outerRadius={60}
                                 dataKey="value"
                                 label={({ name, value, percent }) => `${name} (${value}명, ${(percent * 100).toFixed(0)}%)`}
                                 style={{ fontSize: '10px', fontWeight: 'bold', fill: '#0f172a' }}
@@ -2919,7 +2968,7 @@ export default function AdminApp() {
                                 <Pie
                                   data={fgiStats.demandTargets}
                                   cx="50%" cy="50%"
-                                  outerRadius={85}
+                                  outerRadius={70}
                                   dataKey="value"
                                   label={({ name, value, percent }) => `${name} (${value}명, ${(percent * 100).toFixed(0)}%)`}
                                   style={{ fontSize: '11px', fontWeight: 'bold' }}
@@ -2935,61 +2984,65 @@ export default function AdminApp() {
                         </div>
 
                         {/* 연차 대상 상세 수치표 */}
-                        <div className="mt-4 bg-white border border-gray-100 rounded-xl p-4 text-left">
-                          <h5 className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-1">
+                        <div className="mt-auto bg-white border border-gray-100 rounded-xl p-4 text-left shadow-sm">
+                          <h5 className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-1">
                             <span className="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span>
-                            <span>훈련 시급 대상 신입/연차 분포 실질 통계표</span>
+                            <span>훈련 시급 대상 분포표</span>
                           </h5>
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1.5 text-xs font-semibold">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm font-semibold">
                             {sortedFgiTargets.map((e, idx) => (
-                              <div key={idx} className="flex justify-between py-1 border-b border-gray-50">
-                                <span className="font-semibold text-gray-700">• {e.name}</span>
-                                <span className="font-bold text-emerald-800 shrink-0">{e.value}표 ({((e.value / fgis.length) * 100).toFixed(1)}%)</span>
+                              <div key={idx} className="flex justify-between py-1.5 border-b border-gray-50 items-center">
+                                <span className="font-semibold text-gray-700 truncate mr-2">• {e.name}</span>
+                                <span className="font-bold text-emerald-800 shrink-0">{e.value}명 <span className="text-xs text-gray-400 font-medium ml-1">({((e.value / fgis.length) * 100).toFixed(1)}%)</span></span>
                               </div>
                             ))}
                           </div>
                         </div>
                       </div>
 
-                      {/* Region pie chart */}
-                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
-                        <h4 className="text-xs font-bold text-slate-800 mb-4 tracking-wider">시/도별 참여 분포</h4>
+                      {/* Region bar chart */}
+                      <div className="bg-slate-50 border border-gray-150 p-5 rounded-2xl text-left flex flex-col" style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
+                        <h4 className="text-sm font-bold text-slate-800 mb-4 tracking-wider">시/도별 참여 분포</h4>
                         <div className={isExporting ? "h-[250px] flex justify-center w-full overflow-hidden" : "h-64 flex items-center justify-center"}>
                           {isExporting ? (
-                            <PieChart width={580} height={240}>
-                              <Pie
-                                data={fgiStats.fgiRegionData}
-                                cx="50%" cy="50%"
-                                outerRadius={72}
-                                dataKey="value"
-                                label={({ name, value, percent }) => `${name} (${value}명, ${(percent * 100).toFixed(0)}%)`}
-                                style={{ fontSize: '10px', fontWeight: 'bold', fill: '#0f172a' }}
-                              >
-                                {fgiStats.fgiRegionData.map((e, idx) => (
-                                  <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
-                                ))}
-                              </Pie>
-                              <Tooltip />
-                            </PieChart>
+                            <BarChart data={fgiStats.fgiRegionData} width={500} height={240} layout="vertical" margin={{ left: 20 }}>
+                              <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                              <XAxis type="number" hide />
+                              <YAxis dataKey="name" type="category" width={90} axisLine={false} tickLine={false} style={{ fontSize: '11px', fontWeight: 'bold' }} />
+                              <Tooltip cursor={{ fill: '#f1f5f9' }} />
+                              <Bar dataKey="value" fill="#8B5CF6" radius={[0, 4, 4, 0]} barSize={20}>
+                                <LabelList dataKey="value" position="right" style={{ fontSize: '11px', fontWeight: 'bold' }} />
+                              </Bar>
+                            </BarChart>
                           ) : (
                             <ResponsiveContainer width="100%" height="100%">
-                              <PieChart>
-                                <Pie
-                                  data={fgiStats.fgiRegionData}
-                                  cx="50%" cy="50%"
-                                  outerRadius={85}
-                                  dataKey="value"
-                                  label={({ name, value, percent }) => `${name} (${value}명, ${(percent * 100).toFixed(0)}%)`}
-                                  style={{ fontSize: '11px', fontWeight: 'bold' }}
-                                >
-                                  {fgiStats.fgiRegionData.map((e, idx) => (
-                                    <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
-                                  ))}
-                                </Pie>
-                                <Tooltip />
-                              </PieChart>
+                              <BarChart data={fgiStats.fgiRegionData} layout="vertical" margin={{ left: 10, right: 30 }}>
+                                <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                                <XAxis type="number" hide />
+                                <YAxis dataKey="name" type="category" width={80} axisLine={false} tickLine={false} style={{ fontSize: '12px', fontWeight: 'bold' }} />
+                                <Tooltip cursor={{ fill: '#f1f5f9' }} />
+                                <Bar dataKey="value" fill="#8B5CF6" radius={[0, 4, 4, 0]} maxBarSize={30}>
+                                  <LabelList dataKey="value" position="right" style={{ fontSize: '12px', fontWeight: 'bold', fill: '#6b21a8' }} />
+                                </Bar>
+                              </BarChart>
                             </ResponsiveContainer>
                           )}
+                        </div>
+
+                        {/* 시/도 대상 상세 수치표 */}
+                        <div className="mt-auto bg-white border border-gray-100 rounded-xl p-4 text-left shadow-sm">
+                          <h5 className="text-[11px] font-black text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 bg-purple-600 rounded-full"></span>
+                            <span>상위 참여 지역 분포표</span>
+                          </h5>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm font-semibold">
+                            {fgiStats.fgiRegionData.slice(0, 6).map((e, idx) => (
+                              <div key={idx} className="flex justify-between py-1.5 border-b border-gray-50 items-center">
+                                <span className="font-semibold text-gray-700 truncate mr-2">{idx + 1}. {e.name}</span>
+                                <span className="font-bold text-purple-800 shrink-0">{e.value}곳 <span className="text-xs text-gray-400 font-medium ml-1">({((e.value / fgis.length) * 100).toFixed(1)}%)</span></span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -3009,7 +3062,7 @@ export default function AdminApp() {
                       </div>
 
                       <div className={`bg-slate-50 border border-gray-150 p-6 rounded-2xl text-left ${isExporting ? 'overflow-visible h-auto' : 'overflow-y-auto max-h-[360px] pr-2'}`} style={isExporting ? { pageBreakInside: 'avoid' } : undefined}>
-                        <h4 className="text-sm font-bold text-slate-800 mb-3 tracking-wider">주관식 응답 모아보기: 자유 의견 (4-3)</h4>
+                        <h4 className="text-sm font-bold text-slate-800 mb-3 tracking-wider">주관식 응답 모아보기: 협회 컨소시엄 훈련에 바라는 점 (4-3)</h4>
                         <div className="divide-y divide-gray-200">
                           {fgis.filter(f => f.q4_3).map((f, i) => (
                             <div key={i} className="py-2.5 text-xs">
@@ -3029,26 +3082,25 @@ export default function AdminApp() {
                             <span className="w-2.5 h-2.5 bg-teal-600 rounded-full animate-ping" />
                             <span>📊 FGI 조사 설문문항 분석</span>
                           </h3>
-                          <p className="text-[10px] text-gray-400 mt-1">FGI 자문위원 주관식 의견 및 세부 면담 통계를 정갈한 포맷으로 제시합니다.</p>
                         </div>
                       </div>
 
                       {/* Expanded Questions Grid */}
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                        <DetailedChartCard title="1-1. 면담 대상 기업의 전기 실무 직원 평균 인원" data={fgiStats.fgiEmplData} questionCode="q1_1" color="#3b82f6" />
-                        <DetailedChartCard title="1-2. 면담 대상 기업 전기 실무진의 주요 경력 구간" data={fgiStats.fgiCareerData} questionCode="q1_2" color="#10b981" />
-                        <DetailedChartCard title="1-3. 면담 패널들의 핵심 전공 자격 구분" data={fgiStats.fgiTaskData} questionCode="q1_3" color="#6366f1" />
-                        <DetailedChartCard title="2-1. 국가 지원 기술 훈련의 참여가 가장 필요한 대상 직책" data={fgiStats.fgiTargetData} questionCode="q2_1" color="#f59e0b" />
-                        <DetailedChartCard title="2-2. 사내 전기 실무자들의 현재 평균적 기술 수준" data={fgiStats.fgiCurrLevelData} questionCode="q2_2" color="#ec4899" />
-                        <DetailedChartCard title="2-3. 안전사고 예방을 위해 사내에서 바라는 목표 숙련도 수준" data={fgiStats.fgiTargetLevelData} questionCode="q2_3" color="#8b5cf6" />
-                        <DetailedChartCard title="2-4. 현재 현직자들에게 가장 부족하다고 판단되는 실무 능력" data={fgiStats.fgiLackData} questionCode="q2_4" color="#06b6d4" />
-                        <DetailedChartCard title="3-1. 수탁 공동훈련센터 매칭 및 선정 시 우선 고려 사항" data={fgiStats.fgiConsiderData} questionCode="q3_1" color="#22c55e" />
-                        <DetailedChartCard title="3-2. 사내 실무진을 외부 위탁 교육에 파견 보낼 때 주요 애로사항" data={fgiStats.fgiBlockerData} questionCode="q3_2" color="#f43f5e" />
-                        <DetailedChartCard title="3-3. 업무 공백 유지를 감안한 해당 기업 수강 가능 최대 일정 배정" data={fgiStats.fgiPeriodData} questionCode="q3_3" color="#a855f7" />
-                        <DetailedChartCard title="3-4. 사내 이수율 제고를 도모하기 위한 연간 희망 훈련 시즌" data={fgiStats.fgiSeasonData} questionCode="q3_4" color="#14b8a6" />
-                        <DetailedChartCard title="3-5. 업무 일정 고려 시 과정당 동시 파견 가능한 최대 참석 인원수" data={fgiStats.fgiVolumeData} questionCode="q3_5" color="#6b7280" />
-                        <DetailedChartCard title="4-1. 전반적인 대외 컨소시엄 직업능력개발 훈련에 대한 만족도" data={fgiStats.fgiSatData} questionCode="q4_1" color="#3b82f6" />
-                        <DetailedChartCard title="4-2. 컨소시엄 활성화를 위해 가장 실효적으로 우선 필요한 개선 방안" data={fgiStats.fgiImproveData} questionCode="q4_2" color="#10b981" />
+                        <DetailedChartCard title="1-1. 면담 기업의 전기관련 재직근로자 수" data={fgiStats.fgiEmplData} questionCode="q1_1" color="#3b82f6" />
+                        <DetailedChartCard title="1-2. 면담 기업의 전기직무 재직근로자 경력 분포" data={fgiStats.fgiCareerData} questionCode="q1_2" color="#10b981" />
+                        <DetailedChartCard title="1-3. 면담 기업 전기직무 재직근로자의 주요 수행 업무" data={fgiStats.fgiTaskData} questionCode="q1_3" color="#6366f1" />
+                        <DetailedChartCard title="2-1. 면담 기업 전기직무 재직근로자 중 가장 교육 수요가 높은 대상" data={fgiStats.fgiTargetData} questionCode="q2_1" color="#f59e0b" />
+                        <DetailedChartCard title="2-2. 전기직무 재직근로자의 현재 실무역량 수준" data={fgiStats.fgiCurrLevelData} questionCode="q2_2" color="#ec4899" />
+                        <DetailedChartCard title="2-3. 전기직무 재직근로자에게 요구하는 목표 역량 수준" data={fgiStats.fgiTargetLevelData} questionCode="q2_3" color="#8b5cf6" />
+                        <DetailedChartCard title="2-4. 전기직무 재직근로자가 업무 수행 시 가장 부족하다고 생각되는 역량" data={fgiStats.fgiLackData} questionCode="q2_4" color="#06b6d4" />
+                        <DetailedChartCard title="3-1. 재직근로자를 컨소시엄 훈련에 참여시키는 경우, 가장 중요하게 고려하는 사항" data={fgiStats.fgiConsiderData} questionCode="q3_1" color="#22c55e" />
+                        <DetailedChartCard title="3-2. 재직근로자를 교육에 보낼 때 장애가 되는 요소" data={fgiStats.fgiBlockerData} questionCode="q3_2" color="#f43f5e" />
+                        <DetailedChartCard title="3-3. 재직근로자를 컨소시엄 훈련에 참여시키는 경우, 허용 가능한 기간" data={fgiStats.fgiPeriodData} questionCode="q3_3" color="#a855f7" />
+                        <DetailedChartCard title="3-4. 면담 기업에서 컨소시엄 훈련 참여가 가능한 시기" data={fgiStats.fgiSeasonData} questionCode="q3_4" color="#14b8a6" />
+                        <DetailedChartCard title="3-5. 훈련 참여 가능한 예상 인원" data={fgiStats.fgiVolumeData} questionCode="q3_5" color="#6b7280" />
+                        <DetailedChartCard title="4-1. 협회 컨소시엄 훈련에 대한 전반적인 만족도" data={fgiStats.fgiSatData} questionCode="q4_1" color="#3b82f6" />
+                        <DetailedChartCard title="4-2. 협회 컨소시엄 훈련에 개선이 필요한 사항" data={fgiStats.fgiImproveData} questionCode="q4_2" color="#10b981" />
                       </div>
                     </div>
 

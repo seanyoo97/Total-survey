@@ -248,7 +248,7 @@ export default function DemandSurvey() {
       return;
     }
 
-    const error = validateAll();
+    const error = validateStep();
     if (error) {
       setErrorMessage(error);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -305,13 +305,9 @@ export default function DemandSurvey() {
             <CheckCircle2 size={36} />
           </div>
           <h2 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">설문에 참여해 주셔서 대단히 감사합니다.</h2>
-          <p className="text-gray-500 mb-8 text-xs leading-relaxed font-light whitespace-pre-line px-2 text-center">
-            답변해 주신 소중한 데이터는 저희 공동훈련센터 교육 과정 발전과 신규 교과 설계 분석을 위한 소중한 밑거름이 될 것입니다.
-          </p>
           <button
             onClick={() => navigate('/')}
-            className="w-full py-4.5 bg-teal-600 hover:bg-teal-700 active:scale-98 text-white rounded-xl font-extrabold text-sm shadow-md transition-all duration-200 cursor-pointer block border-none outline-none text-center"
-            style={{ display: 'block', visibility: 'visible', opacity: 1, color: '#ffffff', backgroundColor: '#0d9488' }}
+            className="w-full mt-6 py-4.5 bg-teal-600 hover:bg-teal-700 active:scale-98 text-white rounded-xl font-extrabold text-sm shadow-md transition-all duration-200 cursor-pointer block border-none outline-none text-center active:scale-[0.98] min-h-[48px] break-keep"
           >
             통합 설문조사 포털 홈으로 이동
           </button>
@@ -326,8 +322,18 @@ export default function DemandSurvey() {
         {/* Banner */}
         <div className="bg-gradient-to-r from-primary-green to-emerald-700 text-white p-6 sm:p-8">
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">2027년 컨소시엄 훈련 수요조사</h1>
-          <p className="text-emerald-100/90 text-sm">
-            본 설문서는 직무별 컨소시엄 훈련의 필요성을 도출하여, 과정개발(개편) 및 방향성 수립을 목적으로 진행하고 있습니다.
+          <p className="text-emerald-50/90 text-[11px] sm:text-xs font-light leading-relaxed mb-4">
+            안녕하십니까?<br/>
+            먼저 바쁘신 가운데 귀한 시간을 내어 설문에 응답해 주셔서 대단히 감사합니다.<br/>
+            한국전기기술인협회 인적자원개발팀에서는 국가인적자원개발컨소시엄 사업의 협약기업 재직근로자들의 직무역량 강화를 위한 컨소시엄 훈련 로드맵 및 과정개발(개편)을 추진하고 있습니다.<br/>
+            본 설문서는 직무별 컨소시엄 훈련의 필요성을 도출하여, 컨소시엄 훈련 과정개발(개편) 및 방향성 수립을 목적으로 진행하고 있습니다.<br/>
+            본 수요조사결과는 향후 컨소시엄 훈련 과정개발에 매우 중요한 자료로 활용되며 수요조사 본래의 목적 이외에는 사용하지 않겠습니다. 수요조사 응답에는 약 10분 정도 소요됩니다.<br/>
+            바쁘시더라도 성실하게 응답해주시면 감사하겠습니다.<br/><br/>
+            한국전기기술인협회 교육원장 배상
+          </p>
+          <p className="text-emerald-50/90 text-[11px] sm:text-xs font-light leading-relaxed">
+            ※ 본 조사와 관련된 문의나 의견이 있으시면 아래로 연락 주시기 바랍니다.<br/>
+            &nbsp;&nbsp;□ 조사기관 : 한국전기기술인협회 교육원 인적자원개발팀(02-2182-0781~8)
           </p>
         </div>
 
@@ -495,19 +501,18 @@ export default function DemandSurvey() {
                 <p className="text-xs text-gray-600 leading-relaxed">
                   한국전기기술인협회는 개인정보 수집 및 이용 목적 외의 내용으로 개인정보를 활용하지 않습니다.
                 </p>
-                <div className="flex items-center gap-2 mt-2">
+                <label className="flex items-center gap-2 mt-2 cursor-pointer active:scale-[0.98] transition-all min-h-[44px] break-keep">
                   <input
                     type="checkbox"
-                    id="privacyConsent"
                     name="privacyConsent"
                     checked={formData.privacyConsent}
                     onChange={handleChange}
-                    className="w-4 h-4 text-primary-green focus:ring-primary-green border-gray-300 rounded"
+                    className="w-4 h-4 text-primary-green focus:ring-primary-green border-gray-300 rounded flex-shrink-0"
                   />
-                  <label htmlFor="privacyConsent" className="text-xs font-bold text-gray-700 cursor-pointer">
+                  <span className="text-xs font-bold text-gray-700">
                     개인정보 수집 및 이용에 동의합니다. *
-                  </label>
-                </div>
+                  </span>
+                </label>
               </div>
             </motion.div>
           )}
@@ -640,7 +645,7 @@ export default function DemandSurvey() {
                           value={opt.val}
                           checked={formData.q2_1 === opt.val}
                           onChange={handleChange}
-                          className="w-4 h-4 text-primary-green focus:ring-primary-green"
+                          className="w-4 h-4 text-primary-green focus:ring-primary-green flex-shrink-0"
                         />
                         <span className="font-bold text-sm">{opt.prefix} {opt.val}</span>
                       </div>
@@ -679,7 +684,7 @@ export default function DemandSurvey() {
                             type="checkbox"
                             checked={isChecked}
                             onChange={() => handleMultiCheckboxChange('q2_2', opt)}
-                            className="w-4 h-4 text-primary-green rounded border-gray-300 focus:ring-primary-green"
+                            className="w-4 h-4 text-primary-green rounded border-gray-300 focus:ring-primary-green flex-shrink-0"
                           />
                           <span>{['①','②','③','④'][['회사 교육 담당자의 안내', '지인을 통한 안내와 추천', '협회 홈페이지 및 이메일 등 웹매체를 통해서', '협회지, 홍보 리플릿 등 우편물을 통해서'].indexOf(opt)]} {opt}</span>
                         </label>
@@ -731,7 +736,7 @@ export default function DemandSurvey() {
                           value={opt}
                           checked={formData.q2_4 === opt}
                           onChange={handleChange}
-                          className="w-4 h-4 text-primary-green focus:ring-primary-green"
+                          className="w-4 h-4 text-primary-green focus:ring-primary-green flex-shrink-0"
                         />
                         <span>{['①','②','③','④','⑤'][i]} {opt}</span>
                       </label>
@@ -847,7 +852,7 @@ export default function DemandSurvey() {
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => handleMultiCheckboxChange('q2_7', opt)}
-                          className="w-4 h-4 text-primary-green rounded border-gray-300 focus:ring-primary-green"
+                          className="w-4 h-4 text-primary-green rounded border-gray-300 focus:ring-primary-green flex-shrink-0"
                         />
                         <span>{['①','②','③','④','⑤','⑥'][i]} {opt}</span>
                       </label>
@@ -944,7 +949,7 @@ export default function DemandSurvey() {
                           value={opt}
                           checked={formData.q3_2 === opt}
                           onChange={handleChange}
-                          className="w-4 h-4 text-primary-green focus:ring-primary-green"
+                          className="w-4 h-4 text-primary-green focus:ring-primary-green flex-shrink-0"
                         />
                         <span>{['①','②','③','④','⑤'][i]} {opt}</span>
                       </label>
@@ -970,7 +975,7 @@ export default function DemandSurvey() {
                 </label>
                 <p className="text-xs text-emerald-600 mb-3 font-semibold">※ 최소 1개 이상의 과정-시기를 체크해 주십시오.</p>
 
-                <div className="overflow-x-auto bg-white border border-gray-200 rounded-xl mb-6 shadow-sm">
+                <div className="hidden md:block overflow-x-auto bg-white border border-gray-200 rounded-xl mb-6 shadow-sm">
                   <table className="w-full text-xs text-left min-w-[600px]">
                     <thead className="bg-gray-50 border-b border-gray-200 text-gray-700">
                       <tr>
@@ -1033,6 +1038,51 @@ export default function DemandSurvey() {
                     </tbody>
                   </table>
                 </div>
+
+                {/* Mobile View */}
+                <div className="md:hidden flex flex-col space-y-3 mb-6">
+                  {COURSES_LIST.map((course, idx) => {
+                    const q33 = formData.q3_3 as Record<string, string[]>;
+                    const selectedPeriods = q33[course] || [];
+                    const isCourseSelected = selectedPeriods.length > 0;
+                    
+                    return (
+                      <div key={course} className={`p-4 border rounded-xl shadow-sm transition-all duration-200 ${isCourseSelected ? 'bg-emerald-50 border-emerald-300' : 'bg-white border-gray-200'}`}>
+                        <div className="mb-2 flex items-start justify-between">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold text-white ${idx < 14 ? 'bg-gray-800' : 'bg-blue-800'}`}>
+                            {idx < 14 ? '정부전략' : '대중소상생'}
+                          </span>
+                          <span className="text-gray-400 font-bold text-[10px]">No. {idx + 1}</span>
+                        </div>
+                        <h4 className={`text-[13px] font-bold mb-3 ${isCourseSelected ? 'text-emerald-900' : 'text-gray-800'}`}>{course}</h4>
+                        
+                        <div className="grid grid-cols-3 gap-2 mt-2">
+                          {['2~4월', '5~7월', '8~11월'].map(period => {
+                            const isChecked = selectedPeriods.includes(period);
+                            return (
+                              <label
+                                key={period}
+                                className={`flex items-center justify-center py-2.5 rounded-lg border text-xs cursor-pointer font-bold transition-all duration-200 active:scale-[0.95] select-none ${
+                                  isChecked
+                                    ? 'bg-primary-green text-white border-primary-green shadow-sm'
+                                    : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-100'
+                                }`}
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={isChecked}
+                                  onChange={() => handleCoursePeriodChange(course, period)}
+                                  className="sr-only"
+                                />
+                                <span>{period}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
               <div>
@@ -1053,7 +1103,7 @@ export default function DemandSurvey() {
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => handleMultiCheckboxChange('q3_4', opt)}
-                          className="w-4 h-4 text-primary-green rounded border-gray-300 focus:ring-primary-green mb-1.5"
+                          className="w-4 h-4 text-primary-green rounded border-gray-300 focus:ring-primary-green mb-1.5 flex-shrink-0"
                         />
                         <span className="leading-tight text-[10px]">{['①','②','③','④','⑤','⑥'][i]} {opt}</span>
                       </label>
@@ -1217,8 +1267,8 @@ export default function DemandSurvey() {
               <button
                 type="button"
                 onClick={handleSubmit}
-                disabled={loading}
-                className="flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white px-6 py-2.5 rounded-lg text-xs font-bold tracking-wider shadow-sm transition disabled:opacity-50"
+                disabled={loading || !!validateStep()}
+                className="flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 disabled:bg-gray-300 disabled:hover:bg-gray-300 disabled:cursor-not-allowed text-white px-6 py-2.5 rounded-lg text-xs font-bold tracking-wider shadow-sm transition"
               >
                 <span>설문지 최종 제출하기</span>
                 {loading ? <span className="animate-spin text-[10px]">■</span> : <ArrowRight size={16} />}

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, handleFirestoreError, OperationType } from '../firebase';
-import { COURSES_LIST } from '../courses';
 import { ChevronLeft, ChevronRight, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
 
 export default function FieldCorpSurvey() {
@@ -16,47 +15,32 @@ export default function FieldCorpSurvey() {
   // Form states
   const [formData, setFormData] = useState({
     // [1. 기업현황]
-    q1_1: '', // 직위
-    q1_2: '', // 주요 업종
-    q1_3: '', // 상시 근로자 수
-    q1_4: '', // 관찰 정도
+    q1_1: '', q1_1_other: '',
+    q1_2: '', q1_2_other: '',
+    q1_3: '',
+    q1_4: '',
 
     // [2. 훈련참여 및 활용조사]
-    q2_1: [] as string[], // 직원이 참여한 과정 (복수선택, COURSES_LIST)
-    q2_2: '', // 참여시킨 주된 목적
-    q2_3: '', // 업무 수행 필요성 (5점 척도)
-    q2_4: '', // 업무 적용 기회/지원 제공 여부 (5점 척도)
-    q2_5: '', // 제공한 지원 방식
-    q2_6: '', // 향후 참여기회 확대 의향 (5점 척도)
-    q2_7: '', // 필요한 사후관리 / 후속지원 (주관식)
+    q2_1: '', // 지원 여부 (5점 척도)
+    q2_2: '', q2_2_other: '', // 지원 방식
+    q2_3: '', // 향후 확대 의향 (5점 척도)
+    q2_4: '', // 장기간 적용위한 후속지원 (주관식)
 
-    // [3. 현업적용도 평가] --전부 5점척도
-    q3_1: '', // 업무적용도
-    q3_2: '', // 업무수행 체계성
-    q3_3: '', // 업무성과 향상도
-    q3_4: '', // 문제해결 기여도
-    q3_5: '', // 조직 기여도
-    q3_6: '', // 두드러진 변화/개선 사례 (주관식)
-    q3_7: '', // 개선/보완 사항 (주관식)
+    // [3. 현업적용도 평가]
+    q3_1: '',
+    q3_2: '',
+    q3_3: '',
+    q3_4: '',
+    q3_5: '',
+    q3_6: '', // 주요 업무 개선 사례
+    q3_7: '', // 개선/보완 사항
   });
 
-  // Disabled for testing to allow duplicate responses
   const alreadyCompleted = false;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleMultiCheckboxChange = (course: string) => {
-    setFormData(prev => {
-      const arr = prev.q2_1;
-      if (arr.includes(course)) {
-        return { ...prev, q2_1: arr.filter(item => item !== course) };
-      } else {
-        return { ...prev, q2_1: [...arr, course] };
-      }
-    });
   };
 
   const totalSteps = 3;
@@ -67,18 +51,18 @@ export default function FieldCorpSurvey() {
         if (!formData.q1_1 || !formData.q1_2 || !formData.q1_3 || !formData.q1_4) {
           return "기업현황 파트의 모든 필수 문항에 답변해주세요.";
         }
+        if (formData.q1_1 === '기타(직접기재)' && !formData.q1_1_other) return "1-1번 문항의 기타 의견을 작성해주세요.";
+        if (formData.q1_2 === '기타' && !formData.q1_2_other) return "1-2번 문항의 기타 의견을 작성해주세요.";
         return "";
       case 2:
-        if (formData.q2_1.length === 0) {
-          return "직원이 수강한 과정을 1개 이상 골라주세요.";
+        if (!formData.q2_1 || !formData.q2_2 || !formData.q2_3) {
+          return "훈련참여 및 활용조사에 관한 필수 문항을 모두 채워주십시오.";
         }
-        if (!formData.q2_2 || !formData.q2_3 || !formData.q2_4 || !formData.q2_5 || !formData.q2_6) {
-          return "훈련참여 및 환경 기회 지원에 관한 문항을 모두 채워주십시오.";
-        }
+        if (formData.q2_2 === '기타(직접기재)' && !formData.q2_2_other) return "2-2번 문항의 기타 의견을 작성해주세요.";
         return "";
       case 3:
         if (!formData.q3_1 || !formData.q3_2 || !formData.q3_3 || !formData.q3_4 || !formData.q3_5) {
-          return "5대 핵심 현업적용도 평점 문항은 모두 필수 입력입니다.";
+          return "현업적용도 평가 문항(3-1 첫번째 문항군)은 모두 필수 입력입니다.";
         }
         return "";
       default:
@@ -123,8 +107,15 @@ export default function FieldCorpSurvey() {
     setErrorMessage('');
 
     try {
+      const final_q1_1 = formData.q1_1 === '기타(직접기재)' ? `기타(${formData.q1_1_other})` : formData.q1_1;
+      const final_q1_2 = formData.q1_2 === '기타' ? `기타(${formData.q1_2_other})` : formData.q1_2;
+      const final_q2_2 = formData.q2_2 === '기타(직접기재)' ? `기타(${formData.q2_2_other})` : formData.q2_2;
+
       const submissionData = {
         ...formData,
+        q1_1_final: final_q1_1,
+        q1_2_final: final_q1_2,
+        q2_2_final: final_q2_2,
         createdAt: serverTimestamp()
       };
 
@@ -146,19 +137,15 @@ export default function FieldCorpSurvey() {
   if (isSubmitted || alreadyCompleted) {
     return (
       <div className="min-h-screen bg-brand-bg flex items-center justify-center p-4">
-        <div className="bg-white max-w-lg w-full p-10 rounded-3xl border border-teal-100 shadow-2xl text-center relative overflow-hidden">
+        <div className="bg-white max-w-lg w-full p-10 rounded-3xl border border-emerald-100 shadow-2xl text-center relative overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-teal-500 to-emerald-600" />
-          <div className="w-16 h-16 bg-teal-50 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xs">
+          <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xs">
             <CheckCircle2 size={36} />
           </div>
           <h2 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">설문에 참여해 주셔서 대단히 감사합니다.</h2>
-          <p className="text-gray-500 mb-8 text-xs leading-relaxed font-light whitespace-pre-line px-2 text-center">
-            답변해 주신 소중한 데이터는 저희 공동훈련센터 교육 과정 발전과 신규 교과 설계 분석을 위한 소중한 밑거름이 될 것입니다.
-          </p>
           <button
             onClick={() => navigate('/')}
-            className="w-full py-4.5 bg-teal-600 hover:bg-teal-700 active:scale-98 text-white rounded-xl font-extrabold text-sm shadow-md transition-all duration-200 cursor-pointer block border-none outline-none text-center"
-            style={{ display: 'block', visibility: 'visible', opacity: 1, color: '#ffffff', backgroundColor: '#0d9488' }}
+            className="w-full mt-6 py-4.5 bg-teal-600 hover:bg-teal-700 active:scale-98 text-white rounded-xl font-extrabold text-sm shadow-md transition-all duration-200 cursor-pointer block border-none outline-none text-center active:scale-[0.98] min-h-[48px] break-keep"
           >
             통합 설문조사 포털 홈으로 이동
           </button>
@@ -167,22 +154,32 @@ export default function FieldCorpSurvey() {
     );
   }
 
-  const scaleLabels = [
-    { text: "매우 만족/그렇다", score: "5" },
-    { text: "만족/어느정도", score: "4" },
-    { text: "보통 수준", score: "3" },
-    { text: "미진/그렇지않다", score: "2" },
-    { text: "전혀 무용/아니다", score: "1" }
+  const scaleLabels5 = [
+    { text: "매우 그렇다", score: "5" },
+    { text: "그렇다", score: "4" },
+    { text: "보통이다", score: "3" },
+    { text: "그렇지 않다", score: "2" },
+    { text: "매우 그렇지 않다", score: "1" }
   ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-brand-bg to-emerald-150 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg border border-emerald-100 overflow-hidden">
         {/* Top Banner */}
-        <div className="bg-gradient-to-r from-primary-green to-teal-700 text-white p-6 sm:p-8">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-2">훈련 현업적용도 측정조사 (기업 관리자용)</h1>
-          <p className="text-teal-100/90 text-sm font-light">
-            공동훈련센터에 수강생을 파견하였던 부서장/인사담당자 입장에서 교육이 기업 실무에 실질적으로 효과가 있는지를 과학적으로 분석합니다.
+        <div className="bg-emerald-800 text-white p-6 sm:p-8">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-4">현업적용도 측정조사 (기업용)</h1>
+          <p className="text-emerald-50/90 text-[11px] sm:text-xs font-light leading-relaxed mb-4">
+            안녕하십니까?<br/>
+            바쁘신 가운데 귀한 시간을 내어 본 설문에 응답해 주셔서 감사합니다.<br/>
+            한국전기기술인협회 인적자원개발팀에서는 국가인적자원개발컨소시엄 사업 훈련과정 참여자의 현업적용도 측정조사를 실시하고 있습니다.<br/>
+            본 설문은 귀사 소속 훈련참여자가 훈련과정 수료 후 현업에 복귀하여 교육내용을 실제 업무에 어느 정도 활용하고 있는지 그 수준을 확인하고, 현업적용에 영향을 미치는 요인과 기업 현장에서의 변화 정도를 관리자 관점에서 파악하기 위한 것입니다.<br/>
+            귀하께서 응답해 주신 내용은 향후 컨소시엄 훈련과정의 설계, 운영 및 개선을 위한 기초자료로 활용되며, 기업 현장 수요를 반영한 훈련품질 제고에 중요한 자료가 될 예정입니다.<br/>
+            바쁘시더라도 각 문항에 대하여 객관적이고 성실하게 응답하여 주시기 바랍니다.<br/>
+            감사합니다.
+          </p>
+          <p className="text-emerald-50/90 text-[11px] sm:text-xs font-light leading-relaxed">
+            ※ 본 조사와 관련된 문의나 의견이 있으시면 아래로 연락주시기 바랍니다.<br/>
+            &nbsp;&nbsp;□ 조사기관 : 한국전기기술인협회 교육원 인적자원개발팀(02-2182-0781～9)
           </p>
         </div>
 
@@ -195,13 +192,13 @@ export default function FieldCorpSurvey() {
             <span>단계 ({step} / {totalSteps})</span>
           </div>
           <span className="text-gray-400 font-bold">
-            {step === 1 && "1. 기업 기본 배경"}
-            {step === 2 && "2. 훈련 참여 및 지원 현황"}
-            {step === 3 && "3. 실질 현적 적용 지점"}
+            {step === 1 && "1. 기업현황"}
+            {step === 2 && "2. 훈련참여 및 활용조사"}
+            {step === 3 && "3. 현업적용도 평가"}
           </span>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 sm:p-10">
+        <form onSubmit={(e) => e.preventDefault()} className="p-6 sm:p-10">
           {errorMessage && (
             <div className="p-4 mb-6 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl flex items-center gap-2">
               <AlertTriangle size={18} />
@@ -209,23 +206,18 @@ export default function FieldCorpSurvey() {
             </div>
           )}
 
-          {/* STEP 1: 기업현황 */}
+          {/* STEP 1 */}
           {step === 1 && (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-              <div className="border-b border-gray-100 pb-4">
-                <h3 className="text-lg font-bold text-gray-900">1. 평가 기업 관리자 기본 정보</h3>
-                <p className="text-xs text-gray-500">통계용 회사 기초 구분에 한정해 가공됩니다.</p>
-              </div>
-
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">1-1. 귀하의 회사 내 직위 또는 역할은 무엇입니까?</label>
+                <label className="block text-sm font-bold text-gray-800 mb-3">1-1. 귀하의 직위는 무엇입니까?</label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {['대표이사/사업주', '임원', '부서장', '팀장/현장관리자', '인사/교육담당자', '기타'].map(opt => (
+                  {['대표이사ㆍ사업주', '임원', '부서장', '팀장ㆍ현장관리자', '인사ㆍ교육담당자', '기타(직접기재)'].map(opt => (
                     <label
                       key={opt}
-                      className={`flex items-center justify-center p-3 text-xs font-semibold rounded-xl border cursor-pointer select-none transition ${
+                      className={`flex items-center p-3 text-xs font-semibold rounded-xl border cursor-pointer select-none transition ${
                         formData.q1_1 === opt
-                          ? 'border-teal-600 bg-teal-50 text-teal-850 ring-2 ring-teal-600/20'
+                          ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-600'
                           : 'border-gray-200 hover:bg-gray-50 text-gray-600'
                       }`}
                     >
@@ -235,23 +227,33 @@ export default function FieldCorpSurvey() {
                         value={opt}
                         checked={formData.q1_1 === opt}
                         onChange={handleChange}
-                        className="sr-only"
+                        className="w-4 h-4 text-emerald-600 border-gray-300 focus:ring-emerald-500 mr-2 flex-shrink-0"
                       />
                       <span>{opt}</span>
                     </label>
                   ))}
                 </div>
+                {formData.q1_1 === '기타(직접기재)' && (
+                  <input
+                    type="text"
+                    name="q1_1_other"
+                    value={formData.q1_1_other}
+                    onChange={handleChange}
+                    placeholder="직위를 직접 기재해 주세요"
+                    className="mt-3 w-full border border-gray-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none p-3 rounded-lg text-sm"
+                  />
+                )}
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">1-2. 귀 사의 주된 업종은 무엇입니까?</label>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                  {['설계', '감리', '안전관리', '진단/점검', '기타'].map(opt => (
+                <label className="block text-sm font-bold text-gray-800 mb-3">1-2. 귀사의 주요 업종 또는 사업 분야는 무엇입니까?</label>
+                <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+                  {['설계', '감리', '안전관리', '진단ㆍ점검', '기타'].map(opt => (
                     <label
                       key={opt}
-                      className={`flex items-center justify-center p-3 text-xs font-semibold rounded-xl border cursor-pointer select-none transition ${
+                      className={`flex items-center p-3 text-xs font-semibold rounded-xl border cursor-pointer select-none transition ${
                         formData.q1_2 === opt
-                          ? 'border-teal-600 bg-teal-50 text-teal-850'
+                          ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-600'
                           : 'border-gray-200 hover:bg-gray-50 text-gray-600'
                       }`}
                     >
@@ -261,23 +263,33 @@ export default function FieldCorpSurvey() {
                         value={opt}
                         checked={formData.q1_2 === opt}
                         onChange={handleChange}
-                        className="sr-only"
+                        className="w-4 h-4 text-emerald-600 border-gray-300 focus:ring-emerald-500 mr-2 flex-shrink-0"
                       />
                       <span>{opt}</span>
                     </label>
                   ))}
                 </div>
+                {formData.q1_2 === '기타' && (
+                  <input
+                    type="text"
+                    name="q1_2_other"
+                    value={formData.q1_2_other}
+                    onChange={handleChange}
+                    placeholder="주요 업종을 직접 기재해 주세요"
+                    className="mt-3 w-full border border-gray-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none p-3 rounded-lg text-sm"
+                  />
+                )}
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">1-3. 귀 사의 상시 근로자 규모 수준은?</label>
+                <label className="block text-sm font-bold text-gray-800 mb-3">1-3. 귀사의 사업장 상시 근로자 수는 다음 중 어느 구간에 해당합니까?</label>
                 <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
-                  {['10명 미만', '10명~50명 미만', '50명~100명 미만', '100명~300명 미만', '300명 이상'].map(opt => (
+                  {['10명 미만', '10명 ～50명 미만', '50명 ～ 100명 미만', '100명 ～ 300명 미만', '300명 이상'].map(opt => (
                     <label
                       key={opt}
-                      className={`flex items-center justify-center p-3 text-xs font-semibold rounded-xl border cursor-pointer select-none transition ${
+                      className={`flex items-center p-3 text-[11px] font-semibold rounded-xl border cursor-pointer select-none transition ${
                         formData.q1_3 === opt
-                          ? 'border-teal-600 bg-teal-50 text-teal-850'
+                          ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-600'
                           : 'border-gray-200 hover:bg-gray-50 text-gray-600'
                       }`}
                     >
@@ -287,7 +299,7 @@ export default function FieldCorpSurvey() {
                         value={opt}
                         checked={formData.q1_3 === opt}
                         onChange={handleChange}
-                        className="sr-only"
+                        className="w-4 h-4 text-emerald-600 border-gray-300 focus:ring-emerald-500 mr-2 shrink-0 flex-shrink-0"
                       />
                       <span>{opt}</span>
                     </label>
@@ -296,32 +308,31 @@ export default function FieldCorpSurvey() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">1-4. 귀하는 직원들의 직무 수행 과정 및 학습 성과를 얼마나 빈번히 관찰/피드백하십니까?</label>
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                <label className="block text-sm font-bold text-gray-800 mb-3">1-4. 귀하는 훈련 참여 근로자의 업무 변화를 어느 정도 관리ㆍ관찰할 수 있습니까?</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {[
-                    { val: '직접 지시/평가', sub: "수시로 긴밀히 모니터링" },
-                    { val: '주기적 확인', sub: "정기 회고 및 업무 보고" },
-                    { val: '간접 파악', sub: "협조 결재 또는 동료 반응" },
-                    { val: '거의 모름', sub: "인사기록 카드만 검토" }
+                    '직접 업무를 지시하고 평가한다',
+                    '업무 수행 결과를 주기적으로 확인한다',
+                    '간접적으로만 파악한다',
+                    '거의 알지 못한다'
                   ].map(opt => (
                     <label
-                      key={opt.val}
-                      className={`flex flex-col items-center text-center p-3 rounded-xl border cursor-pointer select-none transition ${
-                        formData.q1_4 === opt.val
-                          ? 'border-teal-600 bg-teal-50 text-teal-850'
+                      key={opt}
+                      className={`flex items-center p-3 rounded-xl border cursor-pointer select-none transition ${
+                        formData.q1_4 === opt
+                          ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-600'
                           : 'border-gray-200 hover:bg-gray-50 text-gray-600'
                       }`}
                     >
                       <input
                         type="radio"
                         name="q1_4"
-                        value={opt.val}
-                        checked={formData.q1_4 === opt.val}
+                        value={opt}
+                        checked={formData.q1_4 === opt}
                         onChange={handleChange}
-                        className="sr-only"
+                        className="w-4 h-4 text-emerald-600 border-gray-300 focus:ring-emerald-500 mr-2 shrink-0 flex-shrink-0"
                       />
-                      <span className="text-xs font-bold">{opt.val}</span>
-                      <span className="text-[10px] text-gray-400 mt-0.5">{opt.sub}</span>
+                      <span className="text-xs font-bold">{opt}</span>
                     </label>
                   ))}
                 </div>
@@ -329,218 +340,198 @@ export default function FieldCorpSurvey() {
             </motion.div>
           )}
 
-          {/* STEP 2: 훈련참여 및 활용조사 */}
+          {/* STEP 2 */}
           {step === 2 && (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-              <div className="border-b border-gray-100 pb-4">
-                <h3 className="text-lg font-bold text-gray-900">2. 임직원 파견 훈련 및 사내 환경 조사</h3>
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
+              <div>
+                <label className="block text-sm font-bold text-gray-800 mb-3">2-1. 귀사는 수료 직원이 학습내용을 업무에 활용할 수 있도록 지원하였습니까?</label>
+                <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                  {scaleLabels5.map(opt => (
+                    <label
+                      key={opt.score}
+                      className={`flex flex-col items-center justify-center p-3 text-xs font-semibold rounded-xl border cursor-pointer select-none transition ${
+                        formData.q2_1 === opt.score
+                          ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-600'
+                          : 'border-gray-200 hover:bg-gray-50 text-gray-600'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="q2_1"
+                        value={opt.score}
+                        checked={formData.q2_1 === opt.score}
+                        onChange={handleChange}
+                        className="sr-only"
+                      />
+                      <span>{opt.text}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
 
-              {/* Course list */}
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-1">
-                  2-1. 최근 귀사 직원(수강생)들이 공동훈련센터에서 최소 1종 이상 수료한 과정을 표시해 주십시오. (복수 선택) *
+                <label className="block text-sm font-bold text-gray-800 mb-3">2-2. 귀사가 제공한 지원 방식은 무엇입니까?</label>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {['관련 업무 부여', '실습 적용 기회 제공', '장비ㆍ자료 제공', '상사 피드백 및 지도', '별도 지원 없음', '기타(직접기재)'].map(opt => (
+                    <label
+                      key={opt}
+                      className={`flex items-center justify-start p-3 text-[11px] sm:text-xs font-semibold rounded-xl border cursor-pointer select-none transition ${
+                        formData.q2_2 === opt
+                          ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-600'
+                          : 'border-gray-200 hover:bg-gray-50 text-gray-600'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="q2_2"
+                        value={opt}
+                        checked={formData.q2_2 === opt}
+                        onChange={handleChange}
+                        className="w-4 h-4 text-emerald-600 border-gray-300 focus:ring-emerald-500 mr-2 shrink-0 flex-shrink-0"
+                      />
+                      <span>{opt}</span>
+                    </label>
+                  ))}
+                </div>
+                {formData.q2_2 === '기타(직접기재)' && (
+                  <input
+                    type="text"
+                    name="q2_2_other"
+                    value={formData.q2_2_other}
+                    onChange={handleChange}
+                    placeholder="지원 방식을 직접 기재해 주세요"
+                    className="mt-3 w-full border border-gray-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none p-3 rounded-lg text-sm"
+                  />
+                )}
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-800 mb-3">2-3. 향후 훈련 참여 기회를 확대할 의향이 있습니까?</label>
+                <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
+                  {scaleLabels5.map(opt => (
+                    <label
+                      key={opt.score}
+                      className={`flex flex-col items-center justify-center p-3 text-xs font-semibold rounded-xl border cursor-pointer select-none transition ${
+                        formData.q2_3 === opt.score
+                          ? 'border-emerald-600 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-600'
+                          : 'border-gray-200 hover:bg-gray-50 text-gray-600'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="q2_3"
+                        value={opt.score}
+                        checked={formData.q2_3 === opt.score}
+                        onChange={handleChange}
+                        className="sr-only"
+                      />
+                      <span>{opt.text}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-800 mb-2">
+                  2-4. 지속적인 업무 적용을 위해 필요한 사후관리 또는 후속지원 사항을 작성해 주시기 바랍니다.
                 </label>
-                <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 max-h-56 overflow-y-auto space-y-1.5 text-left">
-                  {COURSES_LIST.map((course, idx) => {
-                    const isChecked = formData.q2_1.includes(course);
-                    return (
-                      <label
-                        key={course}
-                        className={`flex items-start gap-3 p-1.5 rounded-lg text-xs cursor-pointer transition ${
-                          isChecked ? 'bg-teal-50 font-bold text-teal-950' : 'hover:bg-gray-100 text-gray-700'
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => handleMultiCheckboxChange(course)}
-                          className="w-4 h-4 text-teal-600 rounded border-gray-300 mt-0.5"
-                        />
-                        <span>{idx + 1}. {course}</span>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">2-2. 해당 직원들을 컨소시엄 과정에 참여시킨 주 목적은?</label>
-                  <select
-                    name="q2_2"
-                    value={formData.q2_2}
-                    onChange={handleChange}
-                    className="w-full border border-gray-200 bg-white focus:border-teal-600 outline-none py-2.5 px-3 rounded-lg text-xs"
-                  >
-                    <option value="">-- 선택하십시오 --</option>
-                    <option value="직무역량 향상">현업 부족 기술 보완 및 직무 강화</option>
-                    <option value="문제해결 강화">대응 곤란 애로 및 고장 해결</option>
-                    <option value="안전관리 향상">최신 법 개정에 대비한 안전 수칙 확보</option>
-                    <option value="법/제도 대응">KEC, 소방 등 행정 법/제도 의무 충족</option>
-                    <option value="신규업무 대비">신규 전력 기기 도입 및 부서 전환 대비</option>
-                    <option value="기타">기타 목적</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">2-5. 복귀한 훈련생에게 제공한 가장 구체적인 사내 지원 방식은?</label>
-                  <select
-                    name="q2_5"
-                    value={formData.q2_5}
-                    onChange={handleChange}
-                    className="w-full border border-gray-200 bg-white focus:border-teal-600 outline-none py-2.5 px-3 rounded-lg text-xs"
-                  >
-                    <option value="">-- 선택하십시오 --</option>
-                    <option value="관련 업무 부여">습득 스킬에 밀접한 고난도 업무 부여</option>
-                    <option value="실습 기회">테스트 모형 및 오프라인 배선 실습 자재 부여</option>
-                    <option value="장비/자료">교보재, 분석 계측기 구매 지원</option>
-                    <option value="상사 피드백">부서장의 업무 노하우 전수 및 정기 검토</option>
-                    <option value="별도 지원 없음">특이점 없이 일상 업무 수행</option>
-                    <option value="기타">기타 타 방식</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Scores */}
-              <div className="space-y-4 pt-2">
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1.5">2-3. 수강했던 교육 과목들이 실제 해당 직무에 필수적인 분야였습니까?</label>
-                  <div className="grid grid-cols-5 gap-1.5">
-                    {scaleLabels.map(opt => (
-                      <button
-                        key={opt.score}
-                        type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, q2_3: opt.score }))}
-                        className={`py-2 px-1 text-[11px] font-semibold rounded-lg border transition ${
-                          formData.q2_3 === opt.score
-                            ? 'bg-teal-600 text-white border-teal-600'
-                            : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                        }`}
-                      >
-                        {opt.text} ({opt.score}점)
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1.5">2-4. 수료한 직원들이 교육 내용을 현장에 정량적으로 소급해 적용할 적절한 시공/점검 기회가 허용되었습니까?</label>
-                  <div className="grid grid-cols-5 gap-1.5">
-                    {scaleLabels.map(opt => (
-                      <button
-                        key={opt.score}
-                        type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, q2_4: opt.score }))}
-                        className={`py-2 px-1 text-[11px] font-semibold rounded-lg border transition ${
-                          formData.q2_4 === opt.score
-                            ? 'bg-teal-600 text-white border-teal-600'
-                            : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                        }`}
-                      >
-                        {opt.text} ({opt.score}점)
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1.5">2-6. 당사가 공동훈련센터에 직원들을 위탁 연수 보낼 정규 기회를 향후 확대할 계획이 있습니까?</label>
-                  <div className="grid grid-cols-5 gap-1.5">
-                    {scaleLabels.map(opt => (
-                      <button
-                        key={opt.score}
-                        type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, q2_6: opt.score }))}
-                        className={`py-2 px-1 text-[11px] font-semibold rounded-lg border transition ${
-                          formData.q2_6 === opt.score
-                            ? 'bg-teal-600 text-white border-teal-600'
-                            : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                        }`}
-                      >
-                        {opt.text} ({opt.score}점)
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">2-7. 수강생(직원)들의 성과 정착을 가속하기 위해 필요한 기관 차원의 사후관리/후속 지원이 있다면 적어 주십시오.</label>
                 <textarea
-                  name="q2_7"
-                  value={formData.q2_7}
+                  name="q2_4"
+                  value={formData.q2_4}
                   onChange={handleChange}
-                  rows={2}
-                  className="w-full border border-gray-200 focus:border-teal-600 outline-none p-3 rounded-lg text-xs"
-                  placeholder="예: 실습 장비의 현장 단기 대여 프로그램, 온라인 복습 동영상 서비스 등"
+                  rows={3}
+                  className="w-full border border-gray-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none p-3 rounded-lg text-sm"
+                  placeholder="예: 실습 장비 대여, 사후 온라인 교육 등 자유롭게 적어주세요."
                 />
               </div>
             </motion.div>
           )}
 
-          {/* STEP 3: 현업적용도 평가 */}
+          {/* STEP 3 */}
           {step === 3 && (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-              <div className="border-b border-gray-100 pb-4">
-                <h3 className="text-lg font-bold text-gray-900">3. 교육 성과에 따른 현업 실질 전이 평가</h3>
-                <p className="text-xs text-gray-500">교육 참여 이후 부하 직원의 객관적 태도 및 성과 변동을 평가하는 핵심 척도 5문항입니다.</p>
-              </div>
-
-              <div className="space-y-4">
-                {[
-                  { key: 'q3_1', title: "3-1. 업무적용도", q: "교육을 마치고 복귀한 우리 전공 직원이 훈련 지식을 현장 실업무 해결에 원활히 활용하고 있습니까?" },
-                  { key: 'q3_2', title: "3-2. 업무수행 체계성", q: "수용 교육을 통해 주먹구구식 노하우 대신 과학적 공학 기준(KEC 등)에 맞춰 더 체계적으로 설계/감리/안전관리를 행합니까?" },
-                  { key: 'q3_3', title: "3-3. 업무성과 향상도", q: "작업 소요 시간이 유의미하게 단축되거나 품질 불량이 감소하는 등 명확한 성과상의 진전이 포착되었습니까?" },
-                  { key: 'q3_4', title: "3-4. 문제해결 기여도", q: "계통의 갑작스러운 고장, 소음 노이즈, 기계 오작동 발생 대처 시, 핵심 원인을 스스로 도출할 역량을 보였습니까?" },
-                  { key: 'q3_5', title: "3-5. 조직 기여도", q: "습득한 지식을 다른 부서원에게 공유하여, 부서 원활함 등 팀 전반의 생산성 증폭에 기여했습니까?" }
-                ].map((item) => (
-                  <div key={item.key} className="bg-gray-50/50 p-4 rounded-xl border border-gray-100/80">
-                    <label className="block text-xs font-bold text-gray-800 mb-1.5">{item.title}. {item.q}</label>
-                    <div className="grid grid-cols-5 gap-1">
-                      {scaleLabels.map(opt => (
-                        <button
-                          key={opt.score}
-                          type="button"
-                          onClick={() => setFormData(prev => ({ ...prev, [item.key]: opt.score }))}
-                          className={`py-2 px-0.5 text-[10px] font-semibold rounded-lg border transition ${
-                            (formData as any)[item.key] === opt.score
-                              ? 'bg-teal-700 text-white border-teal-700 shadow-xs'
-                              : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
-                          }`}
-                        >
-                          {opt.text} ({opt.score}점)
-                        </button>
-                      ))}
-                    </div>
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 mb-2">3-1. 다음은 협회 컨소시엄 훈련을 통해 귀사 직원의 현업 활용정도에 대한 질문입니다. 각각의 문항을 잘 읽으시고 현재 귀하의 행동과 일치하는 정도를 체크하시기 바랍니다.</h3>
+                
+                {/* Desktop Table View / Mobile Card View */}
+                <div className="mt-4 border border-gray-200 rounded-xl overflow-hidden">
+                  <div className="hidden md:grid grid-cols-7 bg-gray-50 border-b border-gray-200 text-[11px] font-bold text-gray-700 select-none">
+                    <div className="col-span-2 p-3 text-center border-r border-gray-200">평가 항목</div>
+                    {scaleLabels5.map(opt => (
+                      <div key={opt.score} className="p-3 text-center border-r last:border-0 border-gray-200 flex items-center justify-center break-keep">
+                        {opt.text}
+                      </div>
+                    ))}
                   </div>
-                ))}
+                  
+                  <div className="divide-y divide-gray-200">
+                    {[
+                      { key: 'q3_1', title: "[업무 적용도]", q: "직원은 학습한 내용을 실제 업무에 활용하고 있다." },
+                      { key: 'q3_2', title: "[업무수행체계성]", q: "직원은 이전보다 체계적으로 업무를 수행하고 있다." },
+                      { key: 'q3_3', title: "[업무성과 향상도]", q: "직원은 업무의 정확성ㆍ신속성ㆍ완성도가 향상되었다." },
+                      { key: 'q3_4', title: "[문제해결 기여도]", q: "직원은 현장 문제 파악과 해결에 기여하고 있다." },
+                      { key: 'q3_5', title: "[조직 기여도]", q: "직원은 현장 업무의 원활한 운영에 기여하고 있다." }
+                    ].map((item) => (
+                      <div key={item.key} className="flex flex-col md:grid md:grid-cols-7 hover:bg-gray-50/50 transition-colors">
+                        <div className="col-span-2 p-4 md:border-r border-gray-200 flex flex-col justify-center">
+                          <span className="block text-xs font-bold text-emerald-700 mb-1">{item.title}</span>
+                          <span className="text-[13px] text-gray-800 font-medium leading-tight">{item.q}</span>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 gap-2 p-3 md:p-0 md:gap-0 md:contents">
+                          {scaleLabels5.map(opt => (
+                            <label
+                              key={opt.score}
+                              className={`p-3 text-center border md:border-t-0 md:border-b-0 md:border-r border-gray-200 last:border-r-0 cursor-pointer flex flex-row md:flex-col items-center justify-between md:justify-center rounded-xl md:rounded-none active:scale-[0.98] transition-all duration-200 min-h-[48px] break-keep ${
+                                (formData as any)[item.key] === opt.score
+                                  ? 'bg-emerald-50 ring-1 md:ring-inset md:ring-2 ring-emerald-500 font-bold' 
+                                  : 'bg-white md:bg-transparent hover:bg-gray-50 text-gray-700'
+                              }`}
+                            >
+                              <span className="text-[13px] md:hidden">{opt.text} <span className="ml-1 text-emerald-600/70">({opt.score}점)</span></span>
+                              <input
+                                type="radio"
+                                name={item.key}
+                                value={opt.score}
+                                checked={(formData as any)[item.key] === opt.score}
+                                onChange={handleChange}
+                                className="w-5 h-5 md:w-4 md:h-4 text-emerald-600 focus:ring-emerald-500 flex-shrink-0 md:mt-2"
+                              />
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1 font-semibold">3-6. 훈련 수료 이후 직원에게 잡힌 가장 두드러진 긍정적인 기술 변화나 개선 사례를 간략히 서술해 주십시오.</label>
-                  <textarea
-                    name="q3_6"
-                    value={formData.q3_6}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full border border-gray-200 focus:border-teal-600 outline-none p-2.5 rounded-lg text-xs"
-                    placeholder="예: 보호계전기 오점검 요소를 빠르게 매뉴얼대로 수정하여 안전사고 예방함"
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-800 mb-2">
+                  3-6. 귀사 직원에게 나타난 주요 업무 개선 사례를 작성해 주시기 바랍니다.
+                </label>
+                <textarea
+                  name="q3_6"
+                  value={formData.q3_6}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full border border-gray-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none p-3 rounded-lg text-sm"
+                  placeholder="직원에게서 직접적인 긍정적 변화나 사례를 작성해주세요"
+                />
+              </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1 font-semibold">3-7. 우리 공동훈련센터 과정에서 더 채워져야 하거나 시공 실효 역량상 개선/보완해야 할 사항은?</label>
-                  <textarea
-                    name="q3_7"
-                    value={formData.q3_7}
-                    onChange={handleChange}
-                    rows={3}
-                    className="w-full border border-gray-200 focus:border-teal-600 outline-none p-2.5 rounded-lg text-xs"
-                    placeholder="예: 최신 오실로스코프 및 디지털 미터 장비 실습 기기가 보강되었으면 좋겠습니다."
-                  />
-                </div>
+              <div>
+                <label className="block text-sm font-bold text-gray-800 mb-2">
+                  3-7. 훈련과정이 실제 업무에 도움이 되도록 개선할 사항을 작성해주시기 바랍니다.
+                </label>
+                <textarea
+                  name="q3_7"
+                  value={formData.q3_7}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full border border-gray-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none p-3 rounded-lg text-sm"
+                  placeholder="협회 훈련 과정의 아쉬운 점이나 보완했으면 하는 부분을 남겨주세요"
+                />
               </div>
             </motion.div>
           )}
@@ -562,7 +553,7 @@ export default function FieldCorpSurvey() {
                 onClick={() => navigate('/')}
                 className="text-gray-400 hover:text-gray-600 font-bold text-xs"
               >
-                취소하고 홈으로 가기
+                취소하고 홈으로
               </button>
             )}
 
@@ -577,11 +568,12 @@ export default function FieldCorpSurvey() {
               </button>
             ) : (
               <button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 disabled={loading}
                 className="flex items-center gap-1.5 bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-xl text-xs font-black tracking-wider shadow-md transition disabled:opacity-50"
               >
-                <span>기업용 평가 제출</span>
+                <span>제출하기</span>
                 {loading ? <span className="animate-spin text-[10px]">■</span> : <ArrowRight size={16} />}
               </button>
             )}

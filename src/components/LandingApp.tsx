@@ -42,7 +42,7 @@ export default function LandingApp() {
     },
     {
       id: 4,
-      title: "2026년도 FGI (심층면접)",
+      title: "2026년도 FGI (요구조사)",
       tagline: "훈련 개선을 위한 재직자 심층 의견 수렴",
       desc: "훈련 목표와 애로사항 등 현장의 생생한 목소리를 수집하여, 향후 훈련 과정 운영의 핵심 개선 과제를 발굴합니다.",
       path: "/survey/fgi",

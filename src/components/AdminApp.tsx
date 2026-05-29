@@ -13,7 +13,7 @@ import {
 import { 
   ShieldCheck, LogOut, ArrowLeft, Download, FileSpreadsheet, Lock, FileText,
   UserCheck, AlertCircle, TrendingUp, HelpCircle, ServerCrash, UserPlus, Trash2, Users, ShieldAlert,
-  Brain, Sparkles
+  Brain, Sparkles, MessageSquare
 } from 'lucide-react';
 
 // html2pdf import (with lazy fallback structure)
